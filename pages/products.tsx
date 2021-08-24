@@ -67,6 +67,7 @@ const Products = () => {
                 <HeaderSection
                     title="Listado de Productos"
                     onClickAdd={handleAddProduct}
+                    disableAddButton={false}
                 />
                 <ProductTable
                     handleCartItemClick={handleCartItemClick}
