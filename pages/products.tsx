@@ -5,8 +5,9 @@ import SearchInput from "../components/SearchInput/SearchInput"
 import CartModal from "../components/CartModal"
 import ProductModal from "../components/ProductModal/ProductModal"
 import HeaderSection from "../components/HeaderSection/HeaderSection"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { fetchProducts } from "../redux/thunks/productThunks"
+
 const Products = () => {
     const [openCartModal, setOpenCartModal] = useState(false)
     const [cartItem, setCartItem] = useState({})
@@ -18,6 +19,7 @@ const Products = () => {
     const [isEditingProduct, setIsEditingProduct] = useState(false)
 
     const dispatch = useDispatch()
+    const productsList = useSelector(({ productsReducer }) => productsReducer.products)
 
     useEffect(() => {
         dispatch(fetchProducts())
@@ -77,6 +79,7 @@ const Products = () => {
             <ProductTable
                 handleCartItemClick={handleCartItemClick}
                 handleEditProduct={handleEditProduct}
+                products={productsList}
             />
             <CartModal
                 open={openCartModal}

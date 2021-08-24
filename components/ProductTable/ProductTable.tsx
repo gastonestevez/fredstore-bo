@@ -12,10 +12,13 @@ import SettingsIcon from "@material-ui/icons/FormatListBulleted"
 import EditIcon from "@material-ui/icons/Edit"
 
 import { IconButton } from "@material-ui/core"
+import { IProduct } from "../../redux/reducers/products/IProduct"
 
-
-
-export default function StickyHeadTable({ handleCartItemClick, handleEditProduct }) {
+export default function StickyHeadTable({
+    handleCartItemClick,
+    handleEditProduct,
+    products,
+}) {
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(10)
 
@@ -59,7 +62,7 @@ export default function StickyHeadTable({ handleCartItemClick, handleEditProduct
             align: "right",
         },
     ]
-    
+
     function createData(
         code,
         name,
@@ -70,9 +73,18 @@ export default function StickyHeadTable({ handleCartItemClick, handleEditProduct
         buyPrice,
         action
     ) {
-        return { code, name, category, sellPrice, stock, brand, buyPrice, action }
+        return {
+            code,
+            name,
+            category,
+            sellPrice,
+            stock,
+            brand,
+            buyPrice,
+            action,
+        }
     }
-    
+
     const manageStock = (id: number) => {
         handleCartItemClick(id)
     }
@@ -80,60 +92,39 @@ export default function StickyHeadTable({ handleCartItemClick, handleEditProduct
     const editProduct = (id: number) => {
         handleEditProduct(id)
     }
-    
+
     const getCartComponent = (id: number) => (
         <>
-            <IconButton aria-label="shopping-cart" onClick={() => manageStock(id)}>
+            <IconButton
+                aria-label="shopping-cart"
+                onClick={() => manageStock(id)}
+            >
                 <SettingsIcon />
             </IconButton>
-            <IconButton aria-label="shopping-cart" onClick={() => editProduct(id)}>
+            <IconButton
+                aria-label="shopping-cart"
+                onClick={() => editProduct(id)}
+            >
                 <EditIcon />
             </IconButton>
         </>
     )
-    const rows = [
-        createData(
-            "018219",
-            "Ibuprofeno 500mg",
-            "Farmacia",
-            200.5,
-            20.0,
-            "Bayer",
-            50.0,
-            getCartComponent(8)
-        ),
-        createData(
-            "018229",
-            "Carbón",
-            "Farmacia",
-            200.5,
-            100,
-            "P&G",
-            50.0,
-            getCartComponent(2)
-        ),
-        createData(
-            "0182119",
-            "Hueso",
-            "Petshop",
-            200.5,
-            30,
-            "PetStore",
-            50.0,
-            getCartComponent(4)
-        ),
-        createData(
-            "0182009",
-            "Ritalina",
-            "Farmacia",
-            200.5,
-            10,
-            "Pfizer",
-            50.0,
-            getCartComponent(6)
-        ),
-    ]
+    const getRows = () => {
+        return products.map((p: IProduct) => {
+            return createData(
+                p.codeBar,
+                p.name,
+                p.category,
+                p.sellPrice,
+                p.stock,
+                p.brand,
+                p.buyPrice,
+                getCartComponent(p.id)
+            )
+        })
+    }
     
+    const rows = getRows()
     const useStyles = makeStyles({
         root: {
             width: "100%",
@@ -142,7 +133,7 @@ export default function StickyHeadTable({ handleCartItemClick, handleEditProduct
             maxHeight: 440,
         },
     })
-        
+
     const classes = useStyles()
 
     const handleChangePage = (event, newPage) => {
@@ -184,8 +175,14 @@ export default function StickyHeadTable({ handleCartItemClick, handleEditProduct
                                         role="checkbox"
                                         tabIndex={-1}
                                         key={row.code}
-                                        style={(row['stock'] <= 10) ? {backgroundColor: 'rgba(255,0,0,0.7)'} : null}
-
+                                        style={
+                                            row["stock"] <= 10
+                                                ? {
+                                                      backgroundColor:
+                                                          "rgba(255,0,0,0.7)",
+                                                  }
+                                                : null
+                                        }
                                     >
                                         {columns.map((column) => {
                                             const value = row[column.id]
