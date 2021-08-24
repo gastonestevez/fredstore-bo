@@ -9,6 +9,9 @@ const useStyles = makeStyles((theme) => ({
     menuButton: {
         marginRight: theme.spacing(2),
     },
+    navbar: {
+        marginBottom: 24,
+    }
 }))
 
 const AppNavbar = () => {
@@ -35,7 +38,7 @@ const AppNavbar = () => {
     }
     
     return (
-        <AppBar position="static">
+        <AppBar position="static" className={classes.navbar}>
             <Toolbar variant="dense">
                 <Button onClick={() => transferToHome()} color="inherit">
                     <Typography
@@ -43,7 +46,7 @@ const AppNavbar = () => {
                         variant="h6"
                         color="inherit"
                     >
-                        Vet-Este - Store
+                        Veterinaria del Este
                     </Typography>
                 </Button>
                 <Button onClick={() => transferToProducts()} color="inherit">

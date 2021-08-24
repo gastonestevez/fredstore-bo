@@ -9,9 +9,8 @@ interface StyleProps {
 export const H1 = styled.h1`
     font-size: 20px;
     line-height: 1.2;
-    margin: 0 0 16px;
     font-weight: bold;
-
+    padding: 0;
     /* Tablet & Desktop */
     @media screen and (min-width: 768px) {
         font-size: 32px;
