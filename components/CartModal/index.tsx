@@ -12,6 +12,7 @@ import {
     RadioGroup,
     FormControlLabel,
     Radio,
+    Grid,
 } from "@material-ui/core"
 
 export default function CartModal({
@@ -29,12 +30,11 @@ export default function CartModal({
 
     const handleUpdateStock = (e: BaseSyntheticEvent) => {
         const { value } = e.currentTarget
-        if(value){
+        if (value) {
             setInputStock(parseInt(value))
             setNewCartItem({
                 ...newCartItem,
-                stock:
-                    parseInt(newCartItem.stock) + parseInt(value),
+                stock: parseInt(newCartItem.stock) + parseInt(value),
             })
         }
     }
@@ -44,7 +44,7 @@ export default function CartModal({
     }
 
     const getStockPostVenta = () => {
-        if(stockType === 'Vender'){
+        if (stockType === "Vender") {
             return parseInt(cartItem.stock) - parseInt(inputStock)
         } else {
             return parseInt(cartItem.stock) + parseInt(inputStock)
@@ -63,60 +63,102 @@ export default function CartModal({
                 aria-labelledby="form-dialog-title"
             >
                 <DialogTitle id="form-dialog-title">
-                    Reponer / Vender { cartItem.name }
+                    Reponer / Vender {cartItem.name}
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         Elija una opción. Tenga en cuenta que si vende demás, el
                         stock pasará a ser negativo.
                     </DialogContentText>
-                    <FormControl component="fieldset">
-                        <RadioGroup
-                            aria-label="stockType"
-                            name="stockType1"
-                            value={stockType}
-                            onChange={handleStockType}
-                        >
-                            <FormControlLabel
-                                value="Vender"
-                                control={<Radio />}
-                                label="Vender"
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <FormControl component="fieldset">
+                                <RadioGroup
+                                    aria-label="stockType"
+                                    name="stockType1"
+                                    value={stockType}
+                                    onChange={handleStockType}
+                                >
+                                    <FormControlLabel
+                                        value="Vender"
+                                        control={<Radio />}
+                                        label="Vender"
+                                    />
+                                    <FormControlLabel
+                                        value="Reponer"
+                                        control={<Radio />}
+                                        label="Reponer stock"
+                                    />
+                                </RadioGroup>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <TextField
+                                autoFocus
+                                autoComplete="off"
+                                margin="dense"
+                                id="name"
+                                label="Cantidad"
+                                type="number"
+                                onChange={(e) => handleUpdateStock(e)}
+                                fullWidth
+                                defaultValue={0}
                             />
-                            <FormControlLabel
-                                value="Reponer"
-                                control={<Radio />}
-                                label="Reponer stock"
+                        </Grid>
+
+                        <Grid item xs={6}>
+                            <TextField
+                                autoFocus
+                                margin="dense"
+                                id="paymentMethod"
+                                label="Método de pago"
+                                type="text"
+                                fullWidth
                             />
-                        </RadioGroup>
-                    </FormControl>
-                    <TextField
-                        autoFocus
-                        autoComplete='off'
-                        margin="dense"
-                        id="name"
-                        label="Cantidad"
-                        type="number"
-                        onChange={(e) => handleUpdateStock(e)}
-                        fullWidth
-                        defaultValue={0}
-                    />
-                    <p>Precio por unidad: {cartItem.sellPrice}</p>
-                    <p>Stock disponible: {getStockPostVenta()}</p>
-                    {
-                        stockType === 'Vender' && (
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                autoFocus
+                                margin="dense"
+                                id="reason"
+                                label="Razón (opcional)"
+                                type="text"
+                                fullWidth
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <small>
+                                Precio por unidad: $ {cartItem.sellPrice}
+                            </small>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <small>
+                                Stock disponible: {getStockPostVenta()} unidades
+                            </small>
+                        </Grid>
+                        {stockType === "Vender" && (
                             <>
-                                <p>Precio final: {getPrecioFinal()}</p>
+                                <Grid item xs={12}>
+                                    <small>
+                                        Precio final: $ {getPrecioFinal()}
+                                    </small>
+                                </Grid>
                             </>
-                        )
-                    }
+                        )}
+                    </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} color="primary">
+                    <Button
+                        onClick={handleClose}
+                        color="secondary"
+                        variant="contained"
+                    >
                         Cancelar
                     </Button>
                     <Button
                         onClick={() => handleAccept(newCartItem)}
                         color="primary"
+                        variant="contained"
                     >
                         Aceptar
                     </Button>
