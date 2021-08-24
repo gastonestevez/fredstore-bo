@@ -46,7 +46,7 @@ const AppNavbar = () => {
                         variant="h6"
                         color="inherit"
                     >
-                        Vet-Este - Store
+                        Veterinaria del Este
                     </Typography>
                 </Button>
                 <Button onClick={() => transferToProducts()} color="inherit">
