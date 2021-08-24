@@ -1,13 +1,12 @@
-import { Container, Grid, Box } from "@material-ui/core"
-import React, { useState } from "react"
-import { H1 } from "../common/styles/Headings.styled"
+import { Container } from "@material-ui/core"
+import React, { useState, useEffect } from "react"
 import ProductTable from "../components/ProductTable/ProductTable"
 import SearchInput from "../components/SearchInput/SearchInput"
 import CartModal from "../components/CartModal"
 import ProductModal from "../components/ProductModal/ProductModal"
-import Fab from "@material-ui/core/Fab"
 import HeaderSection from "../components/HeaderSection/HeaderSection"
-
+import { useDispatch } from "react-redux"
+import { fetchProducts } from "../redux/thunks/productThunks"
 const Products = () => {
     const [openCartModal, setOpenCartModal] = useState(false)
     const [cartItem, setCartItem] = useState({})
@@ -17,6 +16,12 @@ const Products = () => {
     const [openProductModal, setOpenProductModal] = useState(false)
     const [actualProduct, setActualProduct] = useState({})
     const [isEditingProduct, setIsEditingProduct] = useState(false)
+
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        dispatch(fetchProducts())
+    }, [dispatch])
 
     const handleCartItemClick = (id: number) => {
         //hardcoded item
@@ -63,31 +68,31 @@ const Products = () => {
 
     return (
         <Container>
-                    <SearchInput onClick={handleOnSearchClick} />
-                <HeaderSection
-                    title="Listado de Productos"
-                    onClickAdd={handleAddProduct}
-                    disableAddButton={false}
-                />
-                <ProductTable
-                    handleCartItemClick={handleCartItemClick}
-                    handleEditProduct={handleEditProduct}
-                />
-                <CartModal
-                    open={openCartModal}
-                    handleClose={() => setOpenCartModal(false)}
-                    handleAccept={(newCartItem: any) =>
-                        handleAcceptCartChanges(newCartItem)
-                    }
-                    cartItem={cartItem}
-                />
-                <ProductModal
-                    open={openProductModal}
-                    handleClose={() => setOpenProductModal(false)}
-                    handleSaveProduct={(p) => handleSaveProduct(p)}
-                    isEditing={isEditingProduct}
-                    product={actualProduct}
-                />
+            <SearchInput onClick={handleOnSearchClick} />
+            <HeaderSection
+                title="Listado de Productos"
+                onClickAdd={handleAddProduct}
+                disableAddButton={false}
+            />
+            <ProductTable
+                handleCartItemClick={handleCartItemClick}
+                handleEditProduct={handleEditProduct}
+            />
+            <CartModal
+                open={openCartModal}
+                handleClose={() => setOpenCartModal(false)}
+                handleAccept={(newCartItem: any) =>
+                    handleAcceptCartChanges(newCartItem)
+                }
+                cartItem={cartItem}
+            />
+            <ProductModal
+                open={openProductModal}
+                handleClose={() => setOpenProductModal(false)}
+                handleSaveProduct={(p) => handleSaveProduct(p)}
+                isEditing={isEditingProduct}
+                product={actualProduct}
+            />
         </Container>
     )
 }

@@ -4,12 +4,11 @@ import { listProducts } from "../reducers/products/productsReducer"
 
 export const fetchProducts = () => async (dispatch: any) => {
     try {
-        setLoading(true)
-        console.log("Fetching products ...")
+        dispatch(setLoading(true))
         //axios
         //dispatch(listProducts)
-        setLoading(false)
+        dispatch(setLoading(false))
     } catch (e) {
-        setLoading(false)
+        dispatch(setLoading(false))
     }
 }
