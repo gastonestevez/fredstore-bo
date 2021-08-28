@@ -17,17 +17,22 @@ import {
 } from "@material-ui/core"
 import { useFormik } from "formik"
 import { useDispatch, useSelector } from "react-redux"
-import { createProduct } from "../../redux/thunks/productThunks"
+import { createProduct, patchProduct } from "../../redux/thunks/productThunks"
 import * as yup from "yup"
 
 export default function ProductModal({
     open,
     handleClose,
     isEditing,
-    handleSaveProduct,
     product,
 }) {
     const dispatch = useDispatch()
+    const isLoading = useSelector(
+        ({ loadingReducer }) => loadingReducer.loading
+    )
+    const categories = useSelector(
+        ({ categoryReducer }) => categoryReducer.categories
+    )
     const validationSchema = yup.object({
         name: yup.string().trim().required("Campo requerido."),
         buyPrice: yup.number().min(0, 'Mínimo debe ser 0.').required("Campo requerido."),
@@ -40,27 +45,27 @@ export default function ProductModal({
     })
     const formik = useFormik({
         validationSchema: validationSchema,
+        enableReinitialize: true,
         initialValues: {
             name: product.name,
             buyPrice: product.buyPrice,
             sellPrice: product.sellPrice,
             description: product.description,
-            category: product.category,
+            category: categories.find((c: any) => c.name === product.category)?.id,
             brand: product.brand,
-            codeBar: product.barCode,
+            codeBar: product.codeBar,
             stock: product.stock,
         },
-        onSubmit: (values) => {
-            dispatch(createProduct(values))
-            handleClose()
+        onSubmit: async (values) => {
+            if(!isEditing){
+                await dispatch(createProduct(values))
+            } else {
+                await dispatch(patchProduct({...values, id: product.id}))
+            }
+            handleClose(true)
         },
     })
-    const isLoading = useSelector(
-        ({ loadingReducer }) => loadingReducer.loading
-    )
-    const categories = useSelector(
-        ({ categoryReducer }) => categoryReducer.categories
-    )
+
 
     return (
         <div>
@@ -223,7 +228,7 @@ export default function ProductModal({
                     </DialogContent>
                     <DialogActions>
                         <Button
-                            onClick={handleClose}
+                            onClick={() =>handleClose(false)}
                             color="secondary"
                             variant="contained"
                         >

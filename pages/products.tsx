@@ -12,24 +12,29 @@ import { fetchCategories } from "../redux/thunks/categoryThunks"
 const Products = () => {
     const [openCartModal, setOpenCartModal] = useState(false)
     const [cartItem, setCartItem] = useState({})
-    const handleOnSearchClick = (text: string) => {
-        console.log("Input text: ", text)
-    }
     const [openProductModal, setOpenProductModal] = useState(false)
     const [actualProduct, setActualProduct] = useState({})
     const [isEditingProduct, setIsEditingProduct] = useState(false)
 
     const dispatch = useDispatch()
-    const productsList = useSelector(
+    const productsSelector = useSelector(
         ({ productsReducer }) => productsReducer.products
     )
     const isLoading = useSelector(
         ({ loadingReducer }) => loadingReducer.loading
     )
+    const [productsList, setProductsList] = useState([])
+
     useEffect(() => {
         dispatch(fetchProducts())
         dispatch(fetchCategories())
     }, [dispatch])
+
+    useEffect(() => {
+        if(productsSelector) {
+            setProductsList(productsSelector)
+        }
+    }, [productsSelector])
 
     const handleCartItemClick = (id: number) => {
         //hardcoded item
@@ -47,19 +52,8 @@ const Products = () => {
     }
 
     const handleEditProduct = (id: number) => {
-        const mockProduct = {
-            id,
-            name: "Sertal Compuesto",
-            sellPrice: 250,
-            buyPrice: 100,
-            description: "Sirve para calmar el dolor de pancita.",
-            category: "FARMACIA",
-            codeBar: "20124821750128",
-            stock: 300,
-            brand: "P&G",
-            visibility: true,
-        }
-        setActualProduct(mockProduct)
+        const findProduct = productsSelector.find((p: any) => p.id === id)
+        setActualProduct(findProduct)
         setIsEditingProduct(true)
         setOpenProductModal(true)
     }
@@ -69,15 +63,33 @@ const Products = () => {
         setOpenProductModal(true)
     }
 
-    const handleSaveProduct = (product: any) => {
-        console.log("*** Saving product: ", product)
+    const handleCloseProductModal = (saved: boolean = false) => {
+        if (saved) {
+            dispatch(fetchProducts())
+        }
+        setActualProduct({})
+        setOpenProductModal(false)
+    }
+
+    const handleOnSearchChange = (text: string) => {
+        setProductsList(
+            productsSelector.filter((p: any) => {
+                return (
+                    p.name
+                        .toLowerCase()
+                        .trim()
+                        .includes(text.toLocaleLowerCase()) ||
+                    p.codeBar.toLowerCase().includes(text.toLowerCase().trim())
+                )
+            })
+        )
     }
 
     return (
         <Container>
             {!isLoading ? (
                 <div>
-                    <SearchInput onClick={handleOnSearchClick} />
+                    <SearchInput onChange={handleOnSearchChange} />
 
                     <HeaderSection
                         title="Listado de Productos"
@@ -99,8 +111,9 @@ const Products = () => {
                     />
                     <ProductModal
                         open={openProductModal}
-                        handleClose={() => setOpenProductModal(false)}
-                        handleSaveProduct={(p) => handleSaveProduct(p)}
+                        handleClose={(saved: boolean) =>
+                            handleCloseProductModal(saved)
+                        }
                         isEditing={isEditingProduct}
                         product={actualProduct}
                     />

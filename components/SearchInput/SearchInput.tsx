@@ -1,26 +1,22 @@
 import { Paper } from "@material-ui/core"
 import { IconButton } from "@material-ui/core"
 import { InputBase } from "@material-ui/core"
-import {
-    createStyles,
-    makeStyles,
-    Theme,
-} from "@material-ui/core"
+import { createStyles, makeStyles, Theme } from "@material-ui/core"
 import React, { useState } from "react"
 import SearchIcon from "@material-ui/icons/Search"
 
-export default function SearchInput({ onClick }) {
+export default function SearchInput({ onChange }) {
     const [searchText, setSearchText] = useState("")
     const useStyles = makeStyles((theme: Theme) =>
         createStyles({
             root: {
                 padding: "2px 4px",
-                width: '500px',
+                width: "500px",
             },
             input: {
                 marginLeft: theme.spacing(1),
                 flex: 1,
-                width: '87%',
+                width: "87%",
             },
             iconButton: {
                 padding: 10,
@@ -30,13 +26,13 @@ export default function SearchInput({ onClick }) {
                 margin: 4,
             },
             base: {
-                width: '100%',
+                width: "100%",
                 display: "flex",
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "center",
                 justifyItems: "center",
-            }
+            },
         })
     )
 
@@ -48,12 +44,15 @@ export default function SearchInput({ onClick }) {
                     className={classes.input}
                     placeholder="Buscar productos"
                     inputProps={{ "aria-label": "buscar productos" }}
-                    onChange={(e) => setSearchText(e.currentTarget.value)}
+                    onChange={(e) => {
+                        onChange(e.currentTarget.value)
+                        setSearchText(e.currentTarget.value)
+                    }}
                 />
                 <IconButton
                     className={classes.iconButton}
                     aria-label="search"
-                    onClick={onClick}
+                    onClick={() => onChange(searchText)}
                 >
                     <SearchIcon />
                 </IconButton>

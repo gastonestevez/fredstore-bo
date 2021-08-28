@@ -36,3 +36,25 @@ export const createProduct = (product: any) => async (dispatch: any) => {
         dispatch(setLoading(false))
     }
 }
+
+export const patchProduct = (product: any) => async (dispatch: any) => {
+    try {
+        dispatch(setLoading(true))
+        const finalProduct = {
+            name: product.name,
+            sell_price: product.sellPrice,
+            description: product.description,
+            code_bar: product.codeBar,
+            stock: product.stock || 0,
+            buy_price: product.buyPrice,
+            brand: product.brand,
+            category_id: product.category,
+            visibility: true,
+        }
+        await axios.put(`${endpoint}/products/${product.id}`, finalProduct)
+        dispatch(setLoading(false))
+
+    } catch(e) {
+        dispatch(setLoading(false))
+    }
+}
