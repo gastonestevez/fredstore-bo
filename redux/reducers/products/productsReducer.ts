@@ -21,10 +21,10 @@ const mapProducts = (products: any) => {
             name: p.name,
             sellPrice: p.sell_price,
             description: p.description,
-            category: 'HARDCODED_CATEGORY',
+            category: p.category_id?.name || '',
             codeBar: p.code_bar,
             stock: p.stock,
-            brand: 'HARDCODED_BRAND',
+            brand: p.brand,
             buyPrice: p.buy_price,
             visibility: p.visibility,
         }

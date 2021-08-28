@@ -1,4 +1,4 @@
-import { Container } from "@material-ui/core"
+import { CircularProgress, Container } from "@material-ui/core"
 import React, { useState, useEffect } from "react"
 import ProductTable from "../components/ProductTable/ProductTable"
 import SearchInput from "../components/SearchInput/SearchInput"
@@ -7,6 +7,7 @@ import ProductModal from "../components/ProductModal/ProductModal"
 import HeaderSection from "../components/HeaderSection/HeaderSection"
 import { useDispatch, useSelector } from "react-redux"
 import { fetchProducts } from "../redux/thunks/productThunks"
+import { fetchCategories } from "../redux/thunks/categoryThunks"
 
 const Products = () => {
     const [openCartModal, setOpenCartModal] = useState(false)
@@ -19,10 +20,15 @@ const Products = () => {
     const [isEditingProduct, setIsEditingProduct] = useState(false)
 
     const dispatch = useDispatch()
-    const productsList = useSelector(({ productsReducer }) => productsReducer.products)
-
+    const productsList = useSelector(
+        ({ productsReducer }) => productsReducer.products
+    )
+    const isLoading = useSelector(
+        ({ loadingReducer }) => loadingReducer.loading
+    )
     useEffect(() => {
         dispatch(fetchProducts())
+        dispatch(fetchCategories())
     }, [dispatch])
 
     const handleCartItemClick = (id: number) => {
@@ -37,7 +43,6 @@ const Products = () => {
         setOpenCartModal(true)
     }
     const handleAcceptCartChanges = (changedItem: any) => {
-        console.log("*** Updating item => ", changedItem)
         setOpenCartModal(false)
     }
 
@@ -70,32 +75,41 @@ const Products = () => {
 
     return (
         <Container>
-            <SearchInput onClick={handleOnSearchClick} />
-            <HeaderSection
-                title="Listado de Productos"
-                onClickAdd={handleAddProduct}
-                disableAddButton={false}
-            />
-            <ProductTable
-                handleCartItemClick={handleCartItemClick}
-                handleEditProduct={handleEditProduct}
-                products={productsList}
-            />
-            <CartModal
-                open={openCartModal}
-                handleClose={() => setOpenCartModal(false)}
-                handleAccept={(newCartItem: any) =>
-                    handleAcceptCartChanges(newCartItem)
-                }
-                cartItem={cartItem}
-            />
-            <ProductModal
-                open={openProductModal}
-                handleClose={() => setOpenProductModal(false)}
-                handleSaveProduct={(p) => handleSaveProduct(p)}
-                isEditing={isEditingProduct}
-                product={actualProduct}
-            />
+            {!isLoading ? (
+                <div>
+                    <SearchInput onClick={handleOnSearchClick} />
+
+                    <HeaderSection
+                        title="Listado de Productos"
+                        onClickAdd={handleAddProduct}
+                        disableAddButton={false}
+                    />
+                    <ProductTable
+                        handleCartItemClick={handleCartItemClick}
+                        handleEditProduct={handleEditProduct}
+                        products={productsList}
+                    />
+                    <CartModal
+                        open={openCartModal}
+                        handleClose={() => setOpenCartModal(false)}
+                        handleAccept={(newCartItem: any) =>
+                            handleAcceptCartChanges(newCartItem)
+                        }
+                        cartItem={cartItem}
+                    />
+                    <ProductModal
+                        open={openProductModal}
+                        handleClose={() => setOpenProductModal(false)}
+                        handleSaveProduct={(p) => handleSaveProduct(p)}
+                        isEditing={isEditingProduct}
+                        product={actualProduct}
+                    />
+                </div>
+            ) : (
+                <CircularProgress
+                    style={{ display: "flex", margin: "0 auto" }}
+                />
+            )}
         </Container>
     )
 }

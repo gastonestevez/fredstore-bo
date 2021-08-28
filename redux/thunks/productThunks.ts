@@ -8,8 +8,7 @@ export const fetchProducts = () => async (dispatch: any) => {
     try {
         dispatch(setLoading(true))
         const response = await axios.get(`${endpoint}/products`)
-        console.log({response})
-        dispatch(listProducts(response.data.data))
+        dispatch(listProducts(response.data.products))
         dispatch(setLoading(false))
     } catch (e) {
         dispatch(setLoading(false))
@@ -24,8 +23,10 @@ export const createProduct = (product: any) => async (dispatch: any) => {
             sell_price: product.sellPrice,
             description: product.description,
             code_bar: product.codeBar,
-            stock: product.stock,
+            stock: product.stock || 0,
             buy_price: product.buyPrice,
+            brand: product.brand,
+            category_id: product.category,
             visibility: true,
         }
         await axios.post(`${endpoint}/products`, finalProduct)
