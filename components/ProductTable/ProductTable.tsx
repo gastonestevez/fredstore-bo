@@ -110,16 +110,16 @@ export default function StickyHeadTable({
         </>
     )
     const getRows = () => {
-        return products.map((p: IProduct) => {
+        return products.map((p: any) => {
             return createData(
-                p.codeBar,
+                p.code_bar,
                 p.name,
-                p.category,
-                p.sellPrice,
+                p.category_id?.name,
+                p.sell_price,
                 p.stock,
                 p.brand,
-                p.buyPrice,
-                getCartComponent(p.id)
+                p.buy_price,
+                getCartComponent(p._id)
             )
         })
     }

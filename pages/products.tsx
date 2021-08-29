@@ -8,6 +8,8 @@ import HeaderSection from "../components/HeaderSection/HeaderSection"
 import { useDispatch, useSelector } from "react-redux"
 import { fetchProducts } from "../redux/thunks/productThunks"
 import { fetchCategories } from "../redux/thunks/categoryThunks"
+import { fetchOperations } from "../redux/thunks/operationThunks"
+import { fetchPayments } from "../redux/thunks/paymentThunks"
 
 const Products = () => {
     const [openCartModal, setOpenCartModal] = useState(false)
@@ -28,31 +30,28 @@ const Products = () => {
     useEffect(() => {
         dispatch(fetchProducts())
         dispatch(fetchCategories())
+        dispatch(fetchOperations())
+        dispatch(fetchPayments())
     }, [dispatch])
 
     useEffect(() => {
-        if(productsSelector) {
+        if (productsSelector) {
             setProductsList(productsSelector)
         }
     }, [productsSelector])
 
     const handleCartItemClick = (id: number) => {
-        //hardcoded item
-        setCartItem({
-            id,
-            name: "Sertal Compuesto",
-            sellPrice: 1300,
-            stock: 100,
-            brand: "Test Brand",
-        })
+        const findProduct = productsSelector.find((p: any) => p._id === id)
+        setCartItem(findProduct)
         setOpenCartModal(true)
     }
-    const handleAcceptCartChanges = (changedItem: any) => {
+    const handleAcceptCartChanges = () => {
         setOpenCartModal(false)
+        dispatch(fetchProducts())
     }
 
     const handleEditProduct = (id: number) => {
-        const findProduct = productsSelector.find((p: any) => p.id === id)
+        const findProduct = productsSelector.find((p: any) => p._id === id)
         setActualProduct(findProduct)
         setIsEditingProduct(true)
         setOpenProductModal(true)
@@ -104,9 +103,7 @@ const Products = () => {
                     <CartModal
                         open={openCartModal}
                         handleClose={() => setOpenCartModal(false)}
-                        handleAccept={(newCartItem: any) =>
-                            handleAcceptCartChanges(newCartItem)
-                        }
+                        handleAccept={() => handleAcceptCartChanges()}
                         cartItem={cartItem}
                     />
                     <ProductModal

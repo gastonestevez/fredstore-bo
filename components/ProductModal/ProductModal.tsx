@@ -48,19 +48,30 @@ export default function ProductModal({
         enableReinitialize: true,
         initialValues: {
             name: product.name,
-            buyPrice: product.buyPrice,
-            sellPrice: product.sellPrice,
+            buyPrice: product.buy_price,
+            sellPrice: product.sell_price,
             description: product.description,
-            category: categories.find((c: any) => c.name === product.category)?.id,
+            category: product.category_id?.name,
             brand: product.brand,
-            codeBar: product.codeBar,
+            codeBar: product.code_bar,
             stock: product.stock,
         },
         onSubmit: async (values) => {
             if(!isEditing){
                 await dispatch(createProduct(values))
             } else {
-                await dispatch(patchProduct({...values, id: product.id}))
+                const finalProduct = {
+                    name: values.name,
+                    sell_price: values.sellPrice,
+                    description: values.description,
+                    code_bar: values.codeBar,
+                    stock: values.stock || 0,
+                    buy_price: values.buyPrice,
+                    brand: values.brand,
+                    category_id: values.category,
+                    visibility: true,
+                }
+                await dispatch(patchProduct({...finalProduct, _id: product._id}))
             }
             handleClose(true)
         },
