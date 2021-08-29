@@ -71,17 +71,13 @@ const Products = () => {
     }
 
     const handleOnSearchChange = (text: string) => {
-        setProductsList(
-            productsSelector.filter((p: any) => {
-                return (
-                    p.name
-                        .toLowerCase()
-                        .trim()
-                        .includes(text.toLocaleLowerCase()) ||
-                    p.codeBar.toLowerCase().includes(text.toLowerCase().trim())
-                )
-            })
-        )
+        const filtro = productsSelector.filter((p: any) => {
+            return (
+                p.name.toLowerCase().trim().includes(text.toLowerCase()) ||
+                p.code_bar.toLowerCase().includes(text.toLowerCase().trim())
+            )
+        })
+        setProductsList(filtro)
     }
 
     return (

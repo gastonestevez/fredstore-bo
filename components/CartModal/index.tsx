@@ -78,46 +78,35 @@ export default function CartModal({
                     ["Venta"]: cartItem.stock - values.stock,
                     ["Compra"]: cartItem.stock + values.stock,
                 }
-                console.log({ operationValue })
-                const stockValue = operationsTypes[operationValue] || values.stock
+                const stockValue =
+                    operationsTypes[operationValue] || values.stock
                 await dispatch(patchProduct({ ...cartItem, stock: stockValue }))
-            } catch(e) {
-                console.log({e})
-            }
-            // await dispatch(
-            //     createNewTransaction({ ...values, productId: cartItem.id })
-            // )
-            // const operationType = operationMethods.find((o:any) => o._id === values.operation)
-            // if(operationType.name === 'Venta'){
-            //     const finalStock = cartItem.stock - values.stock
-            //     await dispatch(
-            //         patchProduct({...cartItem, stock: finalStock})
-            //     )
 
-            // } else if(operationType.name === 'Compra') {
-            //     const finalStock = cartItem.stock + values.stock
-            //     await dispatch(
-            //         patchProduct({...cartItem, stock: finalStock})
-            //     )
-            // } else {
-            //     await dispatch(
-            //         patchProduct({...cartItem, stock: values.stock})
-            //     )
-            // }
-            handleAccept()
+                const finalTransaction = {
+                    operation_id: values.operation,
+                    payment_id: values.payment,
+                    product_id: cartItem._id,
+                    quantity: values.stock,
+                    reason: values.reason,
+                }
+                await dispatch(createNewTransaction(finalTransaction))
+                handleAccept()
+            } catch (e) {
+                console.error({ e })
+            }
         },
     })
 
     const getStockPostVenta = () => {
         if (stockType === "Vender") {
-            return parseInt(cartItem.stock) - inputStock
+            return parseInt(cartItem.stock) - formik.values.stock
         } else {
-            return parseInt(cartItem.stock) + inputStock
+            return parseInt(cartItem.stock) + formik.values.stock
         }
     }
 
     const getPrecioFinal = () => {
-        return parseInt(cartItem.sellPrice) * inputStock
+        return parseInt(cartItem.sell_price) * formik.values.stock
     }
 
     return (
@@ -258,7 +247,7 @@ export default function CartModal({
                             </Grid>
                             <Grid item xs={12}>
                                 <small>
-                                    Precio por unidad: $ {cartItem.sellPrice}
+                                    Precio por unidad: $ {cartItem.sell_price}
                                 </small>
                             </Grid>
                             <Grid item xs={12}>

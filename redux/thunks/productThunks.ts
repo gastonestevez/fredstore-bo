@@ -45,5 +45,6 @@ export const patchProduct = (product: any) => async (dispatch: any) => {
 
     } catch(e) {
         dispatch(setLoading(false))
+        throw(e)
     }
 }
