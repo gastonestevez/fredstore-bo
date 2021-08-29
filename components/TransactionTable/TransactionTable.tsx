@@ -6,7 +6,40 @@ import {
 } from "@material-ui/data-grid"
 import { Grid } from "@material-ui/core"
 import { H2 } from "../../common/styles/Headings.styled"
+import moment from 'moment'
 
+const transactionColumns: GridColDef[] = [
+    {
+        field: "product",
+        headerName: "Producto",
+        width: 150,
+    },
+    {
+        field: "date",
+        headerName: "Fecha",
+        width: 150,
+    },
+    {
+        field: "quantity",
+        headerName: "Cantidad",
+        width: 150,
+    },
+    {
+        field: "operation",
+        headerName: "Operación",
+        width: 150,
+    },
+    {
+        field: "payment",
+        headerName: "Tipo de pago",
+        width: 150,
+    },
+    {
+        field: "reason",
+        headerName: "Razón",
+        width: 350,
+    }
+]
 const columns: GridColDef[] = [
     {
         field: "product",
@@ -42,6 +75,7 @@ const columns: GridColDef[] = [
         editable: true,
     },
 ]
+
 
 const rows = [
     {
@@ -102,7 +136,19 @@ const rows = [
     },
 ]
 
-export default function TransactionTable() {
+export default function TransactionTable({ transactions }) {
+    const transactionRows = transactions.map((t: any) => {
+        return {
+            id: t._id,
+            product: t.product_id?.name,
+            date: moment(t.date).format('l hh:mm'),
+            quantity: t.quantity,
+            operation: t.operation_id?.name,
+            payment: t.payment_id?.name,
+            reason: t.reason,
+        }
+    })
+
     return (
         <Grid
             container
@@ -148,8 +194,8 @@ export default function TransactionTable() {
                 }}
             >
                 <DataGrid
-                    rows={rows}
-                    columns={columns}
+                    rows={transactionRows}
+                    columns={transactionColumns}
                     pageSize={5}
                     rowsPerPageOptions={[5]}
                     disableSelectionOnClick
