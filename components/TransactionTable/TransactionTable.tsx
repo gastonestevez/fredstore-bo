@@ -6,7 +6,8 @@ import {
 } from "@material-ui/data-grid"
 import { Grid } from "@material-ui/core"
 import { H2 } from "../../common/styles/Headings.styled"
-import moment from 'moment'
+import moment from "moment"
+import { useSelector } from "react-redux"
 
 const transactionColumns: GridColDef[] = [
     {
@@ -38,20 +39,18 @@ const transactionColumns: GridColDef[] = [
         field: "reason",
         headerName: "Razón",
         width: 350,
-    }
+    },
 ]
 const columns: GridColDef[] = [
     {
         field: "product",
         headerName: "Producto",
         width: 150,
-        editable: true,
     },
     {
         field: "quantity",
         headerName: "Cantidad",
         width: 140,
-        editable: true,
         type: "number",
     },
     {
@@ -59,95 +58,68 @@ const columns: GridColDef[] = [
         headerName: "Ganancias",
         type: "number",
         width: 150,
-        editable: true,
     },
     {
         field: "stock",
         headerName: "Stock",
         type: "number",
         width: 115,
-        editable: true,
     },
     {
         field: "productType",
         headerName: "Tipo",
         width: 110,
-        editable: true,
     },
 ]
 
+export default function TransactionTable({ transactions, earns }) {
+    const categories = useSelector(
+        ({ categoryReducer }) => categoryReducer.categories
+    )
 
-const rows = [
-    {
-        id: 1,
-        product: "Sertal Compuesto",
-        quantity: 30,
-        totalEarn: 1300,
-        productType: "FARMACIA",
-        stock: 20,
-    },
-    {
-        id: 3,
-        product: "Ibuprofeno",
-        quantity: 5,
-        totalEarn: 500,
-        productType: "FARMACIA",
-        stock: 20,
-    },
-    {
-        id: 5,
-        product: "Hueso",
-        quantity: 23,
-        totalEarn: 100,
-        productType: "PET SHOP",
-        stock: 20,
-    },
-    {
-        id: 9,
-        product: "Paracetamol",
-        quantity: 89,
-        totalEarn: 1830,
-        productType: "FARMACIA",
-        stock: 20,
-    },
-    {
-        id: 11,
-        product: "Test Product",
-        quantity: 89,
-        totalEarn: 1830,
-        productType: "PET SHOP",
-        stock: 20,
-    },
-    {
-        id: 12,
-        product: "Test Farm",
-        quantity: 89,
-        totalEarn: 1830,
-        productType: "FARMACIA",
-        stock: 20,
-    },
-    {
-        id: 13,
-        product: "Test item Shop",
-        quantity: 89,
-        totalEarn: 1830,
-        productType: "PET SHOP",
-        stock: 20,
-    },
-]
-
-export default function TransactionTable({ transactions }) {
     const transactionRows = transactions.map((t: any) => {
         return {
             id: t._id,
             product: t.product_id?.name,
-            date: moment(t.date).format('l hh:mm'),
+            date: moment(t.date).format("l hh:mm"),
             quantity: t.quantity,
             operation: t.operation_id?.name,
             payment: t.payment_id?.name,
             reason: t.reason,
         }
     })
+
+    const earnRows = earns.map((earn: any) => {
+        const category = categories.find(
+            (c: any) => c._id === earn.product.category_id
+        ).name
+        return {
+            id: earn._id,
+            product: earn.product.name,
+            quantity: earn.total_quantity,
+            totalEarn: earn.total_earn,
+            productType: category,
+            stock: earn.product.stock,
+        }
+    })
+
+    const getTotalEarnings = () => {
+        if (earns.length) {
+            return earns.reduce((ac, cv) => ac + cv.total_earn, 0)
+        }
+    }
+
+    const getTotalQuantity = () => {
+        if (earns.length) {
+            return earns.reduce((ac, cv) => ac + cv.total_quantity, 0)
+        }
+    }
+
+    const getMostSelledProduct = () => {
+        if (earns.length) {
+            return earns[0].product.name
+        }
+    }
 
     return (
         <Grid
@@ -166,25 +138,10 @@ export default function TransactionTable({ transactions }) {
                     justifyContent: "space-between",
                 }}
             >
-                <small>📈 Ganancias totales: $ 8381</small>
-                <small>🛒 Total vendidos: 1560</small>
-                <small>💻 Producto más vendido: Sertal Compuesto</small>
+                <small>📈 Ganancias totales: ${getTotalEarnings()}</small>
+                <small>🛒 Total vendidos: {getTotalQuantity()}</small>
+                <small>💻 Producto más vendido: {getMostSelledProduct()}</small>
             </div>
-
-            <Grid
-                item
-                style={{
-                    height: "50vh",
-                }}
-            >
-                <DataGrid
-                    rows={rows}
-                    columns={columns}
-                    pageSize={5}
-                    rowsPerPageOptions={[5]}
-                    disableSelectionOnClick
-                />
-            </Grid>
 
             <H2>Listado de Transacciones</H2>
             <Grid
@@ -196,6 +153,21 @@ export default function TransactionTable({ transactions }) {
                 <DataGrid
                     rows={transactionRows}
                     columns={transactionColumns}
+                    pageSize={5}
+                    rowsPerPageOptions={[5]}
+                    disableSelectionOnClick
+                />
+            </Grid>
+            <H2>Planilla</H2>
+            <Grid
+                item
+                style={{
+                    height: "50vh",
+                }}
+            >
+                <DataGrid
+                    rows={earnRows}
+                    columns={columns}
                     pageSize={5}
                     rowsPerPageOptions={[5]}
                     disableSelectionOnClick

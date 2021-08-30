@@ -6,17 +6,22 @@ import TransactionRange from "../components/TransactionRange/TransactionRange"
 import TransactionTable from "../components/TransactionTable/TransactionTable"
 import { fetchTransactions } from "../redux/thunks/transactionThunks"
 import { useDispatch, useSelector } from "react-redux"
+import { fetchCategories } from "../redux/thunks/categoryThunks"
 
 const Transactions = () => {
     const dispatch = useDispatch()
     const transactionsSelector = useSelector(
         ({ transactionsReducer }) => transactionsReducer.transactions
     )
+    const earnsSelector = useSelector(
+        ({ transactionsReducer }) => transactionsReducer.earns
+    )
+    
     useEffect(() => {
+        dispatch(fetchCategories())
         dispatch(fetchTransactions())
     }, [dispatch])
 
-    console.log(transactionsSelector)
     return (
         <Container>
             <HeaderSection
@@ -29,7 +34,7 @@ const Transactions = () => {
                     <TransactionRange />
                 </Grid>
                 <Grid item xs={9}>
-                    <TransactionTable transactions={transactionsSelector} />
+                    <TransactionTable transactions={transactionsSelector} earns={earnsSelector} />
                 </Grid>
             </Grid>
         </Container>
