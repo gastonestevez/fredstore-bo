@@ -130,19 +130,6 @@ export default function TransactionTable({ transactions, earns }) {
                 flexDirection: "column",
             }}
         >
-            <H2>Listado de Ganancias</H2>
-            <div
-                style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                }}
-            >
-                <small>📈 Ganancias totales: ${getTotalEarnings()}</small>
-                <small>🛒 Total vendidos: {getTotalQuantity()}</small>
-                <small>💻 Producto más vendido: {getMostSelledProduct()}</small>
-            </div>
-
             <H2>Listado de Transacciones</H2>
             <Grid
                 item
@@ -158,7 +145,18 @@ export default function TransactionTable({ transactions, earns }) {
                     disableSelectionOnClick
                 />
             </Grid>
-            <H2>Planilla</H2>
+            <H2>Listado de Ganancias</H2>
+            <div
+                style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                }}
+            >
+                <small>📈 Ganancias totales: ${getTotalEarnings()}</small>
+                <small>🛒 Total vendidos: {getTotalQuantity()}</small>
+                <small>💻 Producto más vendido: {getMostSelledProduct()}</small>
+            </div>
             <Grid
                 item
                 style={{

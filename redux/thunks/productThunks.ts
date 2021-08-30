@@ -18,18 +18,7 @@ export const fetchProducts = () => async (dispatch: any) => {
 export const createProduct = (product: any) => async (dispatch: any) => {
     try {
         dispatch(setLoading(true))
-        const finalProduct = {
-            name: product.name,
-            sell_price: product.sellPrice,
-            description: product.description,
-            code_bar: product.codeBar,
-            stock: product.stock || 0,
-            buy_price: product.buyPrice,
-            brand: product.brand,
-            category_id: product.category,
-            visibility: true,
-        }
-        await axios.post(`${endpoint}/products`, finalProduct)
+        await axios.post(`${endpoint}/products`, product)
         dispatch(setLoading(false))
 
     } catch(e) {

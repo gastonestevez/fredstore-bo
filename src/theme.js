@@ -5,7 +5,7 @@ import { deepPurple, red, indigo } from '@material-ui/core/colors';
 const theme = createTheme({
   palette: {
     primary: {
-      main: deepPurple[500],
+      main: '#664690',
     },
     secondary: {
       main: indigo[500],

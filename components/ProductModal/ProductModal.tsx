@@ -57,20 +57,20 @@ export default function ProductModal({
             stock: product.stock,
         },
         onSubmit: async (values) => {
+            const finalProduct = {
+                name: values.name,
+                sell_price: values.sellPrice,
+                description: values.description,
+                code_bar: values.codeBar,
+                stock: values.stock || 0,
+                buy_price: values.buyPrice,
+                brand: values.brand,
+                category_id: values.category,
+                visibility: true,
+            }
             if(!isEditing){
-                await dispatch(createProduct(values))
+                await dispatch(createProduct(finalProduct))
             } else {
-                const finalProduct = {
-                    name: values.name,
-                    sell_price: values.sellPrice,
-                    description: values.description,
-                    code_bar: values.codeBar,
-                    stock: values.stock || 0,
-                    buy_price: values.buyPrice,
-                    brand: values.brand,
-                    category_id: values.category,
-                    visibility: true,
-                }
                 await dispatch(patchProduct({...finalProduct, _id: product._id}))
             }
             handleClose(true)

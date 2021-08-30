@@ -36,22 +36,25 @@ export default function TransactionRange({ handleUpdateTransactions }) {
         validationSchema: validationSchema,
         enableReinitialize: true,
         initialValues: {
-            fromDate: moment().format('YYYY[-]MM[-]DD'),
-            toDate: moment().format('YYYY[-]MM[-]DD'),
+            fromDate: moment().format("YYYY[-]MM[-]DD"),
+            toDate: moment().format("YYYY[-]MM[-]DD"),
         },
         onSubmit: async (values) => {
             const finalValues = {
                 initial_date: values.fromDate,
-                final_date: moment(values.toDate).add(23, 'hour').add(59, 'minutes').format()
+                final_date: moment(values.toDate)
+                    .add(23, "hour")
+                    .add(59, "minutes")
+                    .format(),
             }
             await dispatch(filterTransactionsByDate(finalValues))
         },
     })
 
     return (
-        <Grid container className={classes.container} spacing={3}>
-            <H2 className={classes.title}>Búsqueda</H2>
-            <form onSubmit={formik.handleSubmit}>
+        <form onSubmit={formik.handleSubmit}>
+            <Grid container className={classes.container} spacing={3}>
+                <H2 className={classes.title}>Búsqueda</H2>
                 <Grid item>
                     <TextField
                         id="fromDate"
@@ -85,13 +88,13 @@ export default function TransactionRange({ handleUpdateTransactions }) {
                         onClick={handleUpdateTransactions}
                         color="primary"
                         variant="contained"
-                        type='submit'
+                        type="submit"
                         fullWidth
                     >
                         Buscar
                     </Button>
                 </Grid>
-            </form>
-        </Grid>
+            </Grid>
+        </form>
     )
 }
