@@ -1,10 +1,12 @@
+import { IProduct } from './../../Interfaces/interfaces';
+import { AppDispatch } from './../store';
 import axios from "axios"
 import { setLoading } from "../reducers/loading/loadingReducer"
 import { listProducts } from "../reducers/products/productsReducer"
 
 const endpoint = process.env.PRODUCTS_ENDPOINT
 
-export const fetchProducts = (page: number = 1, showLoading: boolean = true) => async (dispatch: any) => {
+export const fetchProducts = (page: number = 1, showLoading: boolean = true) => async (dispatch: AppDispatch) => {
     try {
         showLoading && dispatch(setLoading(true))
         const response = await axios.get(`${endpoint}/products/${page}`)
@@ -15,7 +17,7 @@ export const fetchProducts = (page: number = 1, showLoading: boolean = true) => 
     }
 }
 
-export const createProduct = (product: any) => async (dispatch: any) => {
+export const createProduct = (product: IProduct) => async (dispatch: AppDispatch) => {
     try {
         dispatch(setLoading(true))
         await axios.post(`${endpoint}/products`, product)
@@ -26,7 +28,7 @@ export const createProduct = (product: any) => async (dispatch: any) => {
     }
 }
 
-export const patchProduct = (product: any) => async (dispatch: any) => {
+export const patchProduct = (product: IProduct) => async (dispatch: AppDispatch) => {
     try {
         dispatch(setLoading(true))
         await axios.put(`${endpoint}/products/${product._id}`, product)

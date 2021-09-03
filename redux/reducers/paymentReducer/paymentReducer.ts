@@ -1,3 +1,4 @@
+import { IAction } from './../../../Interfaces/interfaces';
 export const LIST_PAYMENTS = "[Payment] list"
 
 export const listPayments = (payments: any) => {
@@ -9,7 +10,7 @@ const initialState = {
     payments: [],
 }
 
-const reducer = (state = initialState, { type, payload }) => {
+const reducer = (state = initialState, { type, payload }: IAction) => {
     switch (type) {
         case LIST_PAYMENTS:
             return { ...state, payments: payload}

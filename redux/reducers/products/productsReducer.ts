@@ -1,8 +1,8 @@
-import { IProduct } from "./IProduct"
+import { IAction, IProduct } from "../../../Interfaces/interfaces"
 export const LIST_PRODUCTS = "[Products] list"
 export const CREATE_PRODUCT = "[Products] create"
 
-export const listProducts = (products: any) => {
+export const listProducts = (products: IProduct[]) => {
     return { type: LIST_PRODUCTS, payload: products }
 }
 
@@ -14,7 +14,7 @@ const initialState = {
     products: [],
 }
 
-const reducer = (state = initialState, { type, payload }) => {
+const reducer = (state = initialState, { type, payload }: IAction) => {
     switch (type) {
         case LIST_PRODUCTS:
             return {

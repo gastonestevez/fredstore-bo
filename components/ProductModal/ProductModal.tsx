@@ -19,29 +19,42 @@ import { useFormik } from "formik"
 import { useDispatch, useSelector } from "react-redux"
 import { createProduct, patchProduct } from "../../redux/thunks/productThunks"
 import * as yup from "yup"
-
+import { AppDispatch, RootState } from "../../redux/store"
+import { IProduct } from "../../Interfaces/interfaces"
+type ProductModalProps = {
+    open: boolean
+    handleClose: (text: boolean) => void
+    isEditing: boolean
+    product: IProduct
+}
 export default function ProductModal({
     open,
     handleClose,
     isEditing,
     product,
-}) {
-    const dispatch = useDispatch()
+}: ProductModalProps) {
+    const dispatch = useDispatch<AppDispatch>()
     const isLoading = useSelector(
-        ({ loadingReducer }) => loadingReducer.loading
+        ({ loadingReducer }: RootState) => loadingReducer.loading
     )
     const categories = useSelector(
-        ({ categoryReducer }) => categoryReducer.categories
+        ({ categoryReducer }: RootState) => categoryReducer.categories
     )
     const validationSchema = yup.object({
         name: yup.string().trim().required("Campo requerido."),
-        buyPrice: yup.number().min(0, 'Mínimo debe ser 0.').required("Campo requerido."),
-        sellPrice: yup.number().min(0, 'Mínimo debe ser 0.').required("Campo requerido."),
-        description: yup.string().nullable().default(''),
+        buyPrice: yup
+            .number()
+            .min(0, "Mínimo debe ser 0.")
+            .required("Campo requerido."),
+        sellPrice: yup
+            .number()
+            .min(0, "Mínimo debe ser 0.")
+            .required("Campo requerido."),
+        description: yup.string().nullable().default(""),
         category: yup.string().required("Campo requerido."),
         brand: yup.string().required("Campo requerido"),
-        codebar: yup.string().nullable().default(''),
-        stock: yup.number().integer().min(0, 'Mínimo debe ser 0.').default(0),
+        codebar: yup.string().nullable().default(""),
+        stock: yup.number().integer().min(0, "Mínimo debe ser 0.").default(0),
     })
     const formik = useFormik({
         validationSchema: validationSchema,
@@ -68,15 +81,16 @@ export default function ProductModal({
                 category_id: values.category,
                 visibility: true,
             }
-            if(!isEditing){
+            if (!isEditing) {
                 await dispatch(createProduct(finalProduct))
             } else {
-                await dispatch(patchProduct({...finalProduct, _id: product._id}))
+                await dispatch(
+                    patchProduct({ ...finalProduct, _id: product._id })
+                )
             }
             handleClose(true)
         },
     })
-
 
     return (
         <div>
@@ -102,8 +116,14 @@ export default function ProductModal({
                                     fullWidth
                                     value={formik.values.name}
                                     onChange={formik.handleChange}
-                                    error={formik.touched.name && !!formik.errors.name}
-                                    helperText={formik.touched.name && formik.errors.name}
+                                    error={
+                                        formik.touched.name &&
+                                        !!formik.errors.name
+                                    }
+                                    helperText={
+                                        formik.touched.name &&
+                                        formik.errors.name
+                                    }
                                 />
                             </Grid>
                             <Grid container item xs={6}>
@@ -117,8 +137,14 @@ export default function ProductModal({
                                     fullWidth
                                     value={formik.values.buyPrice}
                                     onChange={formik.handleChange}
-                                    error={formik.touched.buyPrice && !!formik.errors.buyPrice}
-                                    helperText={formik.touched.buyPrice && formik.errors.buyPrice}
+                                    error={
+                                        formik.touched.buyPrice &&
+                                        !!formik.errors.buyPrice
+                                    }
+                                    helperText={
+                                        formik.touched.buyPrice &&
+                                        formik.errors.buyPrice
+                                    }
                                 />
                             </Grid>
 
@@ -133,8 +159,14 @@ export default function ProductModal({
                                     fullWidth
                                     value={formik.values.sellPrice}
                                     onChange={formik.handleChange}
-                                    error={formik.touched.sellPrice && !!formik.errors.sellPrice}
-                                    helperText={formik.touched.sellPrice && formik.errors.sellPrice}
+                                    error={
+                                        formik.touched.sellPrice &&
+                                        !!formik.errors.sellPrice
+                                    }
+                                    helperText={
+                                        formik.touched.sellPrice &&
+                                        formik.errors.sellPrice
+                                    }
                                 />
                             </Grid>
                             <Grid container item xs={6}>
@@ -148,19 +180,23 @@ export default function ProductModal({
                                     fullWidth
                                     value={formik.values.description}
                                     onChange={formik.handleChange}
-                                    error={formik.touched.description && !!formik.errors.description}
-                                    helperText={formik.touched.description && formik.errors.description}
+                                    error={
+                                        formik.touched.description &&
+                                        !!formik.errors.description
+                                    }
+                                    helperText={
+                                        formik.touched.description &&
+                                        formik.errors.description
+                                    }
                                 />
                             </Grid>
                             <Grid container item xs={6}>
                                 <FormControl
                                     fullWidth
                                     style={{ marginTop: "5px" }}
-                                    
                                 >
                                     <InputLabel id="category-label">
                                         Categoría
-                                    
                                     </InputLabel>
                                     <Select
                                         labelId="category-label"
@@ -170,7 +206,10 @@ export default function ProductModal({
                                         fullWidth
                                         defaultChecked
                                         onChange={formik.handleChange}
-                                        error={formik.touched.category && !!formik.errors.category}
+                                        error={
+                                            formik.touched.category &&
+                                            !!formik.errors.category
+                                        }
                                     >
                                         {categories.map((c: any) => {
                                             return (
@@ -184,9 +223,11 @@ export default function ProductModal({
                                         })}
                                     </Select>
                                     {formik.touched.category && (
-                                    <FormHelperText error={!!formik.touched.category}>
-                                        {formik.errors.category}
-                                    </FormHelperText>
+                                        <FormHelperText
+                                            error={!!formik.touched.category}
+                                        >
+                                            {formik.errors.category}
+                                        </FormHelperText>
                                     )}
                                 </FormControl>
                             </Grid>
@@ -201,8 +242,14 @@ export default function ProductModal({
                                     fullWidth
                                     value={formik.values.codeBar}
                                     onChange={formik.handleChange}
-                                    error={formik.touched.codeBar && !!formik.errors.codeBar}
-                                    helperText={formik.touched.codeBar && formik.errors.codeBar}
+                                    error={
+                                        formik.touched.codeBar &&
+                                        !!formik.errors.codeBar
+                                    }
+                                    helperText={
+                                        formik.touched.codeBar &&
+                                        formik.errors.codeBar
+                                    }
                                 />
                             </Grid>
                             <Grid container item xs={6}>
@@ -216,8 +263,14 @@ export default function ProductModal({
                                     fullWidth
                                     value={formik.values.stock}
                                     onChange={formik.handleChange}
-                                    error={formik.touched.stock && !!formik.errors.stock}
-                                    helperText={formik.touched.stock && formik.errors.stock}
+                                    error={
+                                        formik.touched.stock &&
+                                        !!formik.errors.stock
+                                    }
+                                    helperText={
+                                        formik.touched.stock &&
+                                        formik.errors.stock
+                                    }
                                 />
                             </Grid>
                             <Grid container item xs={6}>
@@ -231,15 +284,21 @@ export default function ProductModal({
                                     fullWidth
                                     value={formik.values.brand}
                                     onChange={formik.handleChange}
-                                    error={formik.touched.brand && !!formik.errors.brand}
-                                    helperText={formik.touched.brand && formik.errors.brand}
+                                    error={
+                                        formik.touched.brand &&
+                                        !!formik.errors.brand
+                                    }
+                                    helperText={
+                                        formik.touched.brand &&
+                                        formik.errors.brand
+                                    }
                                 />
                             </Grid>
                         </Grid>
                     </DialogContent>
                     <DialogActions>
                         <Button
-                            onClick={() =>handleClose(false)}
+                            onClick={() => handleClose(false)}
                             color="secondary"
                             variant="contained"
                         >

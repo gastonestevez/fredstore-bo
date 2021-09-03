@@ -8,6 +8,7 @@ import * as yup from "yup"
 import moment from "moment"
 import { filterTransactionsByDate } from "../../redux/thunks/transactionThunks"
 import { useDispatch } from "react-redux"
+import { AppDispatch } from "../../redux/store"
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -24,9 +25,9 @@ const useStyles = makeStyles((theme: Theme) =>
     })
 )
 
-export default function TransactionRange({ handleUpdateTransactions }) {
+export default function TransactionRange() {
     const classes = useStyles()
-    const dispatch = useDispatch()
+    const dispatch = useDispatch<AppDispatch>()
     const validationSchema = yup.object({
         fromDate: yup.date(),
         toDate: yup.date(),
@@ -85,7 +86,6 @@ export default function TransactionRange({ handleUpdateTransactions }) {
                 </Grid>
                 <Grid item>
                     <Button
-                        onClick={handleUpdateTransactions}
                         color="primary"
                         variant="contained"
                         type="submit"

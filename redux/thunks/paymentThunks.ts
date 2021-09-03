@@ -1,10 +1,11 @@
+import { AppDispatch } from './../store';
 import axios from "axios"
 import { setLoading } from "../reducers/loading/loadingReducer"
 import { listPayments } from "../reducers/paymentReducer/paymentReducer"
 
 const endpoint = process.env.PRODUCTS_ENDPOINT
 
-export const fetchPayments = () => async (dispatch: any) => {
+export const fetchPayments = () => async (dispatch: AppDispatch) => {
     try {
         dispatch(setLoading(true))
         const response = await axios.get(`${endpoint}/payments`)

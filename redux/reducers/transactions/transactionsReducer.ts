@@ -1,16 +1,18 @@
+import { IAction, ITransaction } from './../../../Interfaces/interfaces';
 export const LIST_TRANSACTIONS = "[Transactions] list"
 export const CREATE_TRANSACTION = "[Transactions] create"
 export const FILTER_TRANSACTION = "[Transactions] filter"
 
-export const listTransactions = (transactions: any) => {
+
+export const listTransactions = (transactions: ITransaction[]) : IAction => {
     return { type: LIST_TRANSACTIONS, payload: transactions }
 }
 
-export const filterTransactions = (transactions: any) => {
+export const filterTransactions = (transactions: any) : IAction => {
     return { type: FILTER_TRANSACTION, payload: transactions }
 }
 
-export const createTransaction = (transaction: any) => {
+export const createTransaction = (transaction: ITransaction) : IAction => {
     return { type: LIST_TRANSACTIONS, payload: transaction }
 }
 
@@ -19,7 +21,7 @@ const initialState = {
     earns: [],
 }
 
-const reducer = (state = initialState, { type, payload }) => {
+const reducer = (state = initialState, { type, payload } : IAction) => {
     switch (type) {
         case LIST_TRANSACTIONS:
             return { ...state, transactions: payload }

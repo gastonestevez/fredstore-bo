@@ -1,10 +1,12 @@
+import { ITransaction } from './../../Interfaces/interfaces';
 import axios from "axios"
 import { setLoading } from "../reducers/loading/loadingReducer"
 import { listTransactions, createTransaction, filterTransactions } from "../reducers/transactions/transactionsReducer"
+import { AppDispatch } from "../store"
 
 const endpoint = process.env.PRODUCTS_ENDPOINT
 
-export const fetchTransactions = () => async (dispatch: any) => {
+export const fetchTransactions = () => async (dispatch: AppDispatch) => {
     try {
         dispatch(setLoading(true))
         const response = await axios.get(`${endpoint}/transactions`)
@@ -15,7 +17,7 @@ export const fetchTransactions = () => async (dispatch: any) => {
     }
 }
 
-export const createNewTransaction = (transaction: any) => async (dispatch: any) => {
+export const createNewTransaction = (transaction: ITransaction) => async (dispatch: AppDispatch) => {
     try {
         dispatch(setLoading(true))
         await axios.post(`${endpoint}/transactions`, transaction)
@@ -25,7 +27,7 @@ export const createNewTransaction = (transaction: any) => async (dispatch: any) 
     }
 }
 
-export const filterTransactionsByDate = (dates: any) => async(dispatch: any) => {
+export const filterTransactionsByDate = (dates: any) => async(dispatch: AppDispatch) => {
     try {
         dispatch(setLoading(true))
         const response = await axios.post(`${endpoint}/transactions/date`, dates)

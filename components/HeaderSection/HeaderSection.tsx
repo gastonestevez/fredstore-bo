@@ -3,7 +3,13 @@ import { Fab, Grid } from "@material-ui/core"
 import { H1 } from "../../common/styles/Headings.styled"
 import AddIcon from "@material-ui/icons/Add"
 
-const HeaderSection = ({ title, onClickAdd, disableAddButton }) => {
+type HeaderProps = {
+    title: string,
+    onClickAdd: () => void,
+    disableAddButton: boolean,
+}
+
+const HeaderSection = ({ title, onClickAdd, disableAddButton }: HeaderProps) => {
     return (
         <>
             <Grid container alignItems="center">
@@ -11,7 +17,7 @@ const HeaderSection = ({ title, onClickAdd, disableAddButton }) => {
                     <H1>{title}</H1>
                 </Grid>
                 {!disableAddButton && (
-                    <Grid item xs={0}>
+                    <Grid item>
                         <Fab
                             color="primary"
                             aria-label="add"

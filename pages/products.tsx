@@ -10,22 +10,24 @@ import { fetchProducts } from "../redux/thunks/productThunks"
 import { fetchCategories } from "../redux/thunks/categoryThunks"
 import { fetchOperations } from "../redux/thunks/operationThunks"
 import { fetchPayments } from "../redux/thunks/paymentThunks"
+import { AppDispatch, RootState } from "../redux/store"
+import { IProduct } from "../Interfaces/interfaces"
 
 const Products = () => {
     const [openCartModal, setOpenCartModal] = useState(false)
-    const [cartItem, setCartItem] = useState({})
+    const [cartItem, setCartItem] = useState<IProduct>({} as IProduct)
     const [openProductModal, setOpenProductModal] = useState(false)
     const [actualProduct, setActualProduct] = useState({})
     const [isEditingProduct, setIsEditingProduct] = useState(false)
 
-    const dispatch = useDispatch()
+    const dispatch = useDispatch<AppDispatch>()
     const productsSelector = useSelector(
-        ({ productsReducer }) => productsReducer.products
+        ({ productsReducer }: RootState) => productsReducer.products
     )
     const isLoading = useSelector(
-        ({ loadingReducer }) => loadingReducer.loading
+        ({ loadingReducer }: RootState) => loadingReducer.loading
     )
-    const [productsList, setProductsList] = useState([])
+    const [productsList, setProductsList] = useState<IProduct[] | null>([])
 
     useEffect(() => {
         dispatch(fetchProducts())
@@ -40,8 +42,8 @@ const Products = () => {
         }
     }, [productsSelector])
 
-    const handleCartItemClick = (id: number) => {
-        const findProduct = productsSelector.find((p: any) => p._id === id)
+    const handleCartItemClick = (id: string) => {
+        const findProduct = productsSelector.find((p: IProduct) => p._id === id)
         setCartItem(findProduct)
         setOpenCartModal(true)
     }
@@ -50,8 +52,8 @@ const Products = () => {
         dispatch(fetchProducts())
     }
 
-    const handleEditProduct = (id: number) => {
-        const findProduct = productsSelector.find((p: any) => p._id === id)
+    const handleEditProduct = (id: string) => {
+        const findProduct = productsSelector.find((p: IProduct) => p._id === id)
         setActualProduct(findProduct)
         setIsEditingProduct(true)
         setOpenProductModal(true)
@@ -71,7 +73,7 @@ const Products = () => {
     }
 
     const handleOnSearchChange = (text: string) => {
-        const filtro = productsSelector.filter((p: any) => {
+        const filtro = productsSelector.filter((p: IProduct) => {
             return (
                 p.name.toLowerCase().trim().includes(text.toLowerCase()) ||
                 p.code_bar.toLowerCase().includes(text.toLowerCase().trim())
@@ -98,7 +100,9 @@ const Products = () => {
                     />
                     <CartModal
                         open={openCartModal}
-                        handleClose={() => setOpenCartModal(false)}
+                        handleClose={() => {
+                            setOpenCartModal(false)
+                        }}
                         handleAccept={() => handleAcceptCartChanges()}
                         cartItem={cartItem}
                     />

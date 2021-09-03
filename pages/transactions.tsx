@@ -8,22 +8,23 @@ import { fetchTransactions } from "../redux/thunks/transactionThunks"
 import { useDispatch, useSelector } from "react-redux"
 import { fetchCategories } from "../redux/thunks/categoryThunks"
 import { fetchOperations } from "../redux/thunks/operationThunks"
+import { AppDispatch, RootState } from "../redux/store"
 
 const Transactions = () => {
-    const dispatch = useDispatch()
+    const dispatch = useDispatch<AppDispatch>()
 
     const operations = useSelector(
-        ({ operationReducer }) => operationReducer.operations
+        ({ operationReducer } : RootState) => operationReducer.operations
     )
 
     const getCorrection = () =>
     operations.find((o: any) => o.name === "Corrección")?._id
 
     const transactionsSelector = useSelector(
-        ({ transactionsReducer }) => transactionsReducer.transactions
+        ({ transactionsReducer } : RootState) => transactionsReducer.transactions
     )
     const earnsSelector = useSelector(
-        ({ transactionsReducer }) => transactionsReducer.earns
+        ({ transactionsReducer } : RootState) => transactionsReducer.earns
     ).filter((earn: any) => {
         return earn.operation_id !== getCorrection()
     })

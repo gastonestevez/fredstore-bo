@@ -1,4 +1,4 @@
-import React, { useState, useEffect, BaseSyntheticEvent } from "react"
+import React, { useState, useEffect } from "react"
 import Button from "@material-ui/core/Button"
 import TextField from "@material-ui/core/TextField"
 import Dialog from "@material-ui/core/Dialog"
@@ -8,10 +8,6 @@ import DialogContentText from "@material-ui/core/DialogContentText"
 import DialogTitle from "@material-ui/core/DialogTitle"
 import {
     FormControl,
-    FormLabel,
-    RadioGroup,
-    FormControlLabel,
-    Radio,
     Grid,
     InputLabel,
     Select,
@@ -19,30 +15,37 @@ import {
     MenuItem,
     CircularProgress,
 } from "@material-ui/core"
-import { useDispatch, useSelector } from "react-redux"
+import { DefaultRootState, useDispatch, useSelector } from "react-redux"
 import { useFormik } from "formik"
 import * as yup from "yup"
 import { createNewTransaction } from "../../redux/thunks/transactionThunks"
 import { patchProduct } from "../../redux/thunks/productThunks"
-
+import { IOperation, IPayment, IProduct } from "../../Interfaces/interfaces"
+import { AppDispatch, RootState } from "../../redux/store"
+type CartModalProps = {
+    open: boolean,
+    handleClose: () => void,
+    cartItem: IProduct,
+    handleAccept: () => void,
+}
 export default function CartModal({
     open,
     handleClose,
     cartItem,
     handleAccept,
-}) {
+}: CartModalProps) {
     const [newCartItem, setNewCartItem] = useState({})
     const [stockType, setStockType] = useState("Vender")
     const [inputStock, setInputStock] = useState(0)
-    const dispatch = useDispatch()
+    const dispatch = useDispatch<AppDispatch>()
     const paymentMethods = useSelector(
-        ({ paymentReducer }) => paymentReducer.payments
+        ({ paymentReducer } : RootState) => paymentReducer.payments
     )
     const operationMethods = useSelector(
-        ({ operationReducer }) => operationReducer.operations
+        ({ operationReducer  } : RootState) => operationReducer.operations
     )
     const isLoading = useSelector(
-        ({ loadingReducer }) => loadingReducer.isLoading
+        ({ loadingReducer } : RootState) => loadingReducer.isLoading
     )
 
     const validationSchema = yup.object({
@@ -72,9 +75,9 @@ export default function CartModal({
         onSubmit: async (values) => {
             try {
                 const operationValue = operationMethods.find(
-                    (o: any) => o._id === values.operation
+                    (o: IOperation) => o._id === values.operation
                 )?.name
-                const operationsTypes = {
+                const operationsTypes: { [key: string]: number } = {
                     ["Venta"]: cartItem.stock - values.stock,
                     ["Compra"]: cartItem.stock + values.stock,
                 }
@@ -99,14 +102,14 @@ export default function CartModal({
 
     const getStockPostVenta = () => {
         if (stockType === "Vender") {
-            return parseInt(cartItem.stock) - formik.values.stock
+            return cartItem.stock - formik.values.stock
         } else {
-            return parseInt(cartItem.stock) + formik.values.stock
+            return cartItem.stock + formik.values.stock
         }
     }
 
     const getPrecioFinal = () => {
-        return parseInt(cartItem.sell_price) * formik.values.stock
+        return cartItem.sell_price * formik.values.stock
     }
 
     return (
