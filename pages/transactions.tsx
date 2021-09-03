@@ -7,19 +7,32 @@ import TransactionTable from "../components/TransactionTable/TransactionTable"
 import { fetchTransactions } from "../redux/thunks/transactionThunks"
 import { useDispatch, useSelector } from "react-redux"
 import { fetchCategories } from "../redux/thunks/categoryThunks"
+import { fetchOperations } from "../redux/thunks/operationThunks"
 
 const Transactions = () => {
     const dispatch = useDispatch()
+
+    const operations = useSelector(
+        ({ operationReducer }) => operationReducer.operations
+    )
+
+    const getCorrection = () =>
+    operations.find((o: any) => o.name === "Corrección")?._id
+
     const transactionsSelector = useSelector(
         ({ transactionsReducer }) => transactionsReducer.transactions
     )
     const earnsSelector = useSelector(
         ({ transactionsReducer }) => transactionsReducer.earns
-    )
-    
+    ).filter((earn: any) => {
+        return earn.operation_id !== getCorrection()
+    })
+
+
     useEffect(() => {
         dispatch(fetchCategories())
         dispatch(fetchTransactions())
+        dispatch(fetchOperations())
     }, [dispatch])
 
     return (
@@ -34,7 +47,10 @@ const Transactions = () => {
                     <TransactionRange />
                 </Grid>
                 <Grid item xs={9}>
-                    <TransactionTable transactions={transactionsSelector} earns={earnsSelector} />
+                    <TransactionTable
+                        transactions={transactionsSelector}
+                        earns={earnsSelector}
+                    />
                 </Grid>
             </Grid>
         </Container>

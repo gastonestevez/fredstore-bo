@@ -27,7 +27,6 @@ export const createNewTransaction = (transaction: any) => async (dispatch: any) 
 
 export const filterTransactionsByDate = (dates: any) => async(dispatch: any) => {
     try {
-        console.log(dates)
         dispatch(setLoading(true))
         const response = await axios.post(`${endpoint}/transactions/date`, dates)
         dispatch(filterTransactions(response.data))

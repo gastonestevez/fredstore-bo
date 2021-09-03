@@ -26,7 +26,6 @@ const reducer = (state = initialState, { type, payload }) => {
         case CREATE_TRANSACTION:
             return { ...state }
         case FILTER_TRANSACTION:
-            console.log({payload})
             return {
                 ...state,
                 transactions: payload.transactions,

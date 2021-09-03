@@ -2,7 +2,6 @@ import * as React from "react"
 import {
     DataGrid,
     GridColDef,
-    GridValueGetterParams,
 } from "@material-ui/data-grid"
 import { Grid } from "@material-ui/core"
 import { H2 } from "../../common/styles/Headings.styled"
@@ -77,6 +76,7 @@ export default function TransactionTable({ transactions, earns }) {
         ({ categoryReducer }) => categoryReducer.categories
     )
 
+
     const transactionRows = transactions.map((t: any) => {
         return {
             id: t._id,
@@ -93,6 +93,7 @@ export default function TransactionTable({ transactions, earns }) {
         const category = categories.find(
             (c: any) => c._id === earn.product.category_id
         ).name
+        
         return {
             id: earn._id,
             product: earn.product.name,
@@ -105,7 +106,7 @@ export default function TransactionTable({ transactions, earns }) {
 
     const getTotalEarnings = () => {
         if (earns.length) {
-            return earns.reduce((ac, cv) => ac + cv.total_earn, 0)
+            return earns.reduce((ac, cv) => ac + (cv.product.sell_price-cv.product.buy_price) * cv.total_quantity, 0)
         }
     }
 
@@ -153,8 +154,8 @@ export default function TransactionTable({ transactions, earns }) {
                     justifyContent: "space-between",
                 }}
             >
-                <small>📈 Ganancias totales: ${getTotalEarnings()}</small>
-                <small>🛒 Total vendidos: {getTotalQuantity()}</small>
+                <small>📈 Total vendido: ${getTotalEarnings()}</small>
+                <small>🛒 Total unidades vendidas: {getTotalQuantity()}</small>
                 <small>💻 Producto más vendido: {getMostSelledProduct()}</small>
             </div>
             <Grid

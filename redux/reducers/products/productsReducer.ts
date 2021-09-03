@@ -14,26 +14,15 @@ const initialState = {
     products: [],
 }
 
-// const mapProducts = (products: any) => {
-//     return products.map((p: any) => {
-//         return {
-//             id: p._id,
-//             name: p.name,
-//             sellPrice: p.sell_price,
-//             description: p.description,
-//             category: p.category_id?.name || '',
-//             codeBar: p.code_bar,
-//             stock: p.stock,
-//             brand: p.brand,
-//             buyPrice: p.buy_price,
-//             visibility: p.visibility,
-//         }
-//     })
-// }
 const reducer = (state = initialState, { type, payload }) => {
     switch (type) {
         case LIST_PRODUCTS:
-            return { ...state, products: payload }
+            return {
+                ...state,
+                products: payload.products,
+                current: payload.current,
+                totalPages: payload.pages,
+            }
         case CREATE_PRODUCT:
             return { ...state }
         default:

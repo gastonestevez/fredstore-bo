@@ -11,7 +11,8 @@ const theme = createTheme({
       main: indigo[500],
     },
     error: {
-      main: red.A400,
+      main: '#ef5350',
+      light: '#f27573'
     },
   },
 });
