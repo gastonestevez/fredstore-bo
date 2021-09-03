@@ -4,7 +4,7 @@ import { Grid } from "@material-ui/core"
 import { H2 } from "../../common/styles/Headings.styled"
 import moment from "moment"
 import { useSelector } from "react-redux"
-import { IEarn, ITransaction } from "../../Interfaces/interfaces"
+import { IEarn, IOperation, ITransaction } from "../../Interfaces/interfaces"
 import { RootState } from "../../redux/store"
 
 const transactionColumns: GridColDef[] = [
@@ -79,9 +79,20 @@ export default function TransactionTable({
     transactions,
     earns,
 }: TransactionTableProps) {
+
     const categories = useSelector(
         ({ categoryReducer }: RootState) => categoryReducer.categories
     )
+    
+    const operations = useSelector(
+        ({ operationReducer }: RootState) => operationReducer.operations
+    )
+
+    const getBuyOperation = () => {
+        return operations.find((o: IOperation) => {
+            return o.name === "Venta"
+        })
+    }
 
     const transactionRows = transactions.map((t: any) => {
         return {
@@ -113,7 +124,10 @@ export default function TransactionTable({
     const getTotalEarnings = () => {
         if (earns.length) {
             const earnArr = earns as Array<IEarn>
-            return earnArr.reduce(
+            
+            return earnArr.filter((e: IEarn) => {
+                e.operation_id === getBuyOperation()._id
+            }).reduce(
                 (ac: number, cv: IEarn) =>
                     ac +
                     (cv.product.sell_price - cv.product.buy_price) *
@@ -122,11 +136,15 @@ export default function TransactionTable({
             )
         }
     }
-
+console.log(getTotalEarnings())
     const getTotalQuantity = () => {
         if (earns.length) {
             const earnArr = earns as Array<IEarn>
-            return earnArr.reduce(
+            console.log(earnArr)
+            return earnArr.filter((e: IEarn) => {
+                console.log(e.operation_id)
+                e.operation_id === getBuyOperation()._id
+            }).reduce(
                 (ac: number, cv: IEarn) => ac + cv.total_quantity,
                 0
             )
@@ -163,7 +181,7 @@ export default function TransactionTable({
                     disableSelectionOnClick
                 />
             </Grid>
-            <H2>Listado de Ganancias</H2>
+            <H2>Listado de Ganancias (no funciona)</H2>
             <div
                 style={{
                     display: "flex",
