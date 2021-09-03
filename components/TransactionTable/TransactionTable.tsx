@@ -1,24 +1,54 @@
 import * as React from "react"
-import {
-    DataGrid,
-    GridColDef,
-    GridValueGetterParams,
-} from "@material-ui/data-grid"
+import { DataGrid, GridColDef } from "@material-ui/data-grid"
 import { Grid } from "@material-ui/core"
 import { H2 } from "../../common/styles/Headings.styled"
+import moment from "moment"
+import { useSelector } from "react-redux"
+import { IEarn, ITransaction } from "../../Interfaces/interfaces"
+import { RootState } from "../../redux/store"
 
+const transactionColumns: GridColDef[] = [
+    {
+        field: "product",
+        headerName: "Producto",
+        width: 150,
+    },
+    {
+        field: "date",
+        headerName: "Fecha",
+        width: 150,
+    },
+    {
+        field: "quantity",
+        headerName: "Cantidad",
+        width: 150,
+    },
+    {
+        field: "operation",
+        headerName: "Operación",
+        width: 150,
+    },
+    {
+        field: "payment",
+        headerName: "Tipo de pago",
+        width: 150,
+    },
+    {
+        field: "reason",
+        headerName: "Razón",
+        width: 350,
+    },
+]
 const columns: GridColDef[] = [
     {
         field: "product",
         headerName: "Producto",
         width: 150,
-        editable: true,
     },
     {
         field: "quantity",
         headerName: "Cantidad",
         width: 140,
-        editable: true,
         type: "number",
     },
     {
@@ -26,83 +56,89 @@ const columns: GridColDef[] = [
         headerName: "Ganancias",
         type: "number",
         width: 150,
-        editable: true,
     },
     {
         field: "stock",
         headerName: "Stock",
         type: "number",
         width: 115,
-        editable: true,
     },
     {
         field: "productType",
         headerName: "Tipo",
         width: 110,
-        editable: true,
     },
 ]
 
-const rows = [
-    {
-        id: 1,
-        product: "Sertal Compuesto",
-        quantity: 30,
-        totalEarn: 1300,
-        productType: "FARMACIA",
-        stock: 20,
-    },
-    {
-        id: 3,
-        product: "Ibuprofeno",
-        quantity: 5,
-        totalEarn: 500,
-        productType: "FARMACIA",
-        stock: 20,
-    },
-    {
-        id: 5,
-        product: "Hueso",
-        quantity: 23,
-        totalEarn: 100,
-        productType: "PET SHOP",
-        stock: 20,
-    },
-    {
-        id: 9,
-        product: "Paracetamol",
-        quantity: 89,
-        totalEarn: 1830,
-        productType: "FARMACIA",
-        stock: 20,
-    },
-    {
-        id: 11,
-        product: "Test Product",
-        quantity: 89,
-        totalEarn: 1830,
-        productType: "PET SHOP",
-        stock: 20,
-    },
-    {
-        id: 12,
-        product: "Test Farm",
-        quantity: 89,
-        totalEarn: 1830,
-        productType: "FARMACIA",
-        stock: 20,
-    },
-    {
-        id: 13,
-        product: "Test item Shop",
-        quantity: 89,
-        totalEarn: 1830,
-        productType: "PET SHOP",
-        stock: 20,
-    },
-]
+type TransactionTableProps = {
+    transactions: ITransaction[] | []
+    earns: IEarn[] | []
+}
 
-export default function TransactionTable() {
+export default function TransactionTable({
+    transactions,
+    earns,
+}: TransactionTableProps) {
+    const categories = useSelector(
+        ({ categoryReducer }: RootState) => categoryReducer.categories
+    )
+
+    const transactionRows = transactions.map((t: any) => {
+        return {
+            id: t._id,
+            product: t.product_id?.name,
+            date: moment(t.date).format("l hh:mm"),
+            quantity: t.quantity,
+            operation: t.operation_id?.name,
+            payment: t.payment_id?.name,
+            reason: t.reason,
+        }
+    })
+
+    const earnRows = earns.map((earn: any) => {
+        const category = categories.find(
+            (c: any) => c._id === earn.product.category_id
+        ).name
+
+        return {
+            id: earn._id,
+            product: earn.product.name,
+            quantity: earn.total_quantity,
+            totalEarn: earn.total_earn,
+            productType: category,
+            stock: earn.product.stock,
+        }
+    })
+
+    const getTotalEarnings = () => {
+        if (earns.length) {
+            const earnArr = earns as Array<IEarn>
+            return earnArr.reduce(
+                (ac: number, cv: IEarn) =>
+                    ac +
+                    (cv.product.sell_price - cv.product.buy_price) *
+                        cv.total_quantity,
+                0
+            )
+        }
+    }
+
+    const getTotalQuantity = () => {
+        if (earns.length) {
+            const earnArr = earns as Array<IEarn>
+            return earnArr.reduce(
+                (ac: number, cv: IEarn) => ac + cv.total_quantity,
+                0
+            )
+        }
+    }
+
+    const getMostSelledProduct = () => {
+        if (earns.length) {
+            return earns[0].product.name
+        }
+    }
+
     return (
         <Grid
             container
@@ -112,34 +148,6 @@ export default function TransactionTable() {
                 flexDirection: "column",
             }}
         >
-            <H2>Listado de Ganancias</H2>
-            <div
-                style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                }}
-            >
-                <small>📈 Ganancias totales: $ 8381</small>
-                <small>🛒 Total vendidos: 1560</small>
-                <small>💻 Producto más vendido: Sertal Compuesto</small>
-            </div>
-
-            <Grid
-                item
-                style={{
-                    height: "50vh",
-                }}
-            >
-                <DataGrid
-                    rows={rows}
-                    columns={columns}
-                    pageSize={5}
-                    rowsPerPageOptions={[5]}
-                    disableSelectionOnClick
-                />
-            </Grid>
-
             <H2>Listado de Transacciones</H2>
             <Grid
                 item
@@ -148,7 +156,33 @@ export default function TransactionTable() {
                 }}
             >
                 <DataGrid
-                    rows={rows}
+                    rows={transactionRows}
+                    columns={transactionColumns}
+                    pageSize={5}
+                    rowsPerPageOptions={[5]}
+                    disableSelectionOnClick
+                />
+            </Grid>
+            <H2>Listado de Ganancias</H2>
+            <div
+                style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                }}
+            >
+                <small>📈 Total vendido: ${getTotalEarnings()}</small>
+                <small>🛒 Total unidades vendidas: {getTotalQuantity()}</small>
+                <small>💻 Producto más vendido: {getMostSelledProduct()}</small>
+            </div>
+            <Grid
+                item
+                style={{
+                    height: "50vh",
+                }}
+            >
+                <DataGrid
+                    rows={earnRows}
                     columns={columns}
                     pageSize={5}
                     rowsPerPageOptions={[5]}

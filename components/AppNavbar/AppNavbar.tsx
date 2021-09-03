@@ -1,6 +1,7 @@
 import { AppBar, Button, Toolbar, Typography } from "@material-ui/core"
 import { makeStyles } from "@material-ui/core/styles"
 import { useRouter } from "next/router"
+import Image from 'next/image'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -41,13 +42,14 @@ const AppNavbar = () => {
         <AppBar position="static" className={classes.navbar}>
             <Toolbar variant="dense">
                 <Button onClick={() => transferToHome()} color="inherit">
-                    <Typography
+                    <Image src='/navlogo.svg' alt='navlogo' width='32' height='32' />
+                    {/* <Typography
                         className={classes.menuButton}
                         variant="h6"
                         color="inherit"
                     >
                         Veterinaria del Este
-                    </Typography>
+                    </Typography> */}
                 </Button>
                 <Button onClick={() => transferToProducts()} color="inherit">
                     Productos

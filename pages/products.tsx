@@ -1,58 +1,62 @@
-import { Container } from "@material-ui/core"
+import { CircularProgress, Container } from "@material-ui/core"
 import React, { useState, useEffect } from "react"
 import ProductTable from "../components/ProductTable/ProductTable"
 import SearchInput from "../components/SearchInput/SearchInput"
 import CartModal from "../components/CartModal"
 import ProductModal from "../components/ProductModal/ProductModal"
 import HeaderSection from "../components/HeaderSection/HeaderSection"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { fetchProducts } from "../redux/thunks/productThunks"
-const Products = () => {
-    const [openCartModal, setOpenCartModal] = useState(false)
-    const [cartItem, setCartItem] = useState({})
-    const handleOnSearchClick = (text: string) => {
-        console.log("Input text: ", text)
-    }
-    const [openProductModal, setOpenProductModal] = useState(false)
-    const [actualProduct, setActualProduct] = useState({})
-    const [isEditingProduct, setIsEditingProduct] = useState(false)
+import { fetchCategories } from "../redux/thunks/categoryThunks"
+import { fetchOperations } from "../redux/thunks/operationThunks"
+import { fetchPayments } from "../redux/thunks/paymentThunks"
+import { AppDispatch, RootState } from "../redux/store"
+import { IProduct } from "../Interfaces/interfaces"
 
-    const dispatch = useDispatch()
+const Products = () => {
+    const [openCartModal, setOpenCartModal] = useState<boolean>(false)
+    const [cartItem, setCartItem] = useState<IProduct>({} as IProduct)
+    const [openProductModal, setOpenProductModal] = useState<boolean>(false)
+    const [actualProduct, setActualProduct] = useState<IProduct>({} as IProduct)
+    const [isEditingProduct, setIsEditingProduct] = useState<boolean>(false)
+
+    const dispatch = useDispatch<AppDispatch>()
+    const productsSelector = useSelector(
+        ({ productsReducer }: RootState) => productsReducer.products
+    )
+    const isLoading = useSelector(
+        ({ loadingReducer }: RootState) => loadingReducer.loading
+    )
+    const [productsList, setProductsList] = useState<IProduct[]>(
+        [] as Array<IProduct>
+    )
 
     useEffect(() => {
         dispatch(fetchProducts())
+        dispatch(fetchCategories())
+        dispatch(fetchOperations())
+        dispatch(fetchPayments())
     }, [dispatch])
 
-    const handleCartItemClick = (id: number) => {
-        //hardcoded item
-        setCartItem({
-            id,
-            name: "Sertal Compuesto",
-            sellPrice: 1300,
-            stock: 100,
-            brand: "Test Brand",
-        })
+    useEffect(() => {
+        if (productsSelector) {
+            setProductsList(productsSelector)
+        }
+    }, [productsSelector])
+
+    const handleCartItemClick = (id: string) => {
+        const findProduct = productsSelector.find((p: IProduct) => p._id === id)
+        setCartItem(findProduct)
         setOpenCartModal(true)
     }
-    const handleAcceptCartChanges = (changedItem: any) => {
-        console.log("*** Updating item => ", changedItem)
+    const handleAcceptCartChanges = () => {
         setOpenCartModal(false)
+        dispatch(fetchProducts())
     }
 
-    const handleEditProduct = (id: number) => {
-        const mockProduct = {
-            id,
-            name: "Sertal Compuesto",
-            sellPrice: 250,
-            buyPrice: 100,
-            description: "Sirve para calmar el dolor de pancita.",
-            category: "FARMACIA",
-            codeBar: "20124821750128",
-            stock: 300,
-            brand: "P&G",
-            visibility: true,
-        }
-        setActualProduct(mockProduct)
+    const handleEditProduct = (id: string) => {
+        const findProduct = productsSelector.find((p: IProduct) => p._id === id)
+        setActualProduct(findProduct)
         setIsEditingProduct(true)
         setOpenProductModal(true)
     }
@@ -62,37 +66,62 @@ const Products = () => {
         setOpenProductModal(true)
     }
 
-    const handleSaveProduct = (product: any) => {
-        console.log("*** Saving product: ", product)
+    const handleCloseProductModal = (saved: boolean = false) => {
+        if (saved) {
+            dispatch(fetchProducts())
+        }
+        setActualProduct({} as IProduct)
+        setOpenProductModal(false)
+    }
+
+    const handleOnSearchChange = (text: string) => {
+        const filtro = productsSelector.filter((p: IProduct) => {
+            return (
+                p.name.toLowerCase().trim().includes(text.toLowerCase()) ||
+                p.code_bar.toLowerCase().includes(text.toLowerCase().trim())
+            )
+        })
+        setProductsList(filtro)
     }
 
     return (
         <Container>
-            <SearchInput onClick={handleOnSearchClick} />
-            <HeaderSection
-                title="Listado de Productos"
-                onClickAdd={handleAddProduct}
-                disableAddButton={false}
-            />
-            <ProductTable
-                handleCartItemClick={handleCartItemClick}
-                handleEditProduct={handleEditProduct}
-            />
-            <CartModal
-                open={openCartModal}
-                handleClose={() => setOpenCartModal(false)}
-                handleAccept={(newCartItem: any) =>
-                    handleAcceptCartChanges(newCartItem)
-                }
-                cartItem={cartItem}
-            />
-            <ProductModal
-                open={openProductModal}
-                handleClose={() => setOpenProductModal(false)}
-                handleSaveProduct={(p) => handleSaveProduct(p)}
-                isEditing={isEditingProduct}
-                product={actualProduct}
-            />
+            {!isLoading ? (
+                <div>
+                    <SearchInput onChange={handleOnSearchChange} />
+
+                    <HeaderSection
+                        title="Listado de Productos"
+                        onClickAdd={handleAddProduct}
+                        disableAddButton={false}
+                    />
+                    <ProductTable
+                        handleCartItemClick={handleCartItemClick}
+                        handleEditProduct={handleEditProduct}
+                        products={productsList}
+                    />
+                    <CartModal
+                        open={openCartModal}
+                        handleClose={() => {
+                            setOpenCartModal(false)
+                        }}
+                        handleAccept={() => handleAcceptCartChanges()}
+                        cartItem={cartItem}
+                    />
+                    <ProductModal
+                        open={openProductModal}
+                        handleClose={(saved: boolean) =>
+                            handleCloseProductModal(saved)
+                        }
+                        isEditing={isEditingProduct}
+                        product={actualProduct}
+                    />
+                </div>
+            ) : (
+                <CircularProgress
+                    style={{ display: "flex", margin: "0 auto" }}
+                />
+            )}
         </Container>
     )
 }
