@@ -98,7 +98,7 @@ export default function TransactionTable({
     const earnRows = earns.map((earn: any) => {
         const category = categories.find(
             (c: any) => c._id === earn.product.category_id
-        ).name
+        )?.name || ''
 
         return {
             id: earn._id,
