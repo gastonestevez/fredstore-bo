@@ -82,7 +82,7 @@ export default function CartModal({
                     ["Compra"]: cartItem.stock + values.stock,
                 }
                 const stockValue =
-                    operationsTypes[operationValue] || values.stock
+                    operationsTypes[operationValue] !== NaN ? operationsTypes[operationValue] : values.stock
                 await dispatch(patchProduct({ ...cartItem, stock: stockValue }))
                 const finalTransaction = {
                     operation_id: values.operation,
