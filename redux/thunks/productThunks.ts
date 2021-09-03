@@ -1,4 +1,4 @@
-import { IProduct } from './../../Interfaces/interfaces';
+import { IProduct, IProductCreate } from './../../Interfaces/interfaces';
 import { AppDispatch } from './../store';
 import axios from "axios"
 import { setLoading } from "../reducers/loading/loadingReducer"
@@ -17,7 +17,7 @@ export const fetchProducts = (page: number = 1, showLoading: boolean = true) => 
     }
 }
 
-export const createProduct = (product: IProduct) => async (dispatch: AppDispatch) => {
+export const createProduct = (product: IProductCreate) => async (dispatch: AppDispatch) => {
     try {
         dispatch(setLoading(true))
         await axios.post(`${endpoint}/products`, product)
@@ -28,7 +28,7 @@ export const createProduct = (product: IProduct) => async (dispatch: AppDispatch
     }
 }
 
-export const patchProduct = (product: IProduct) => async (dispatch: AppDispatch) => {
+export const patchProduct = (product: any) => async (dispatch: AppDispatch) => {
     try {
         dispatch(setLoading(true))
         await axios.put(`${endpoint}/products/${product._id}`, product)

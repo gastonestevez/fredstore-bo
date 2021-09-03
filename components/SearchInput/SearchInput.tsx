@@ -5,7 +5,11 @@ import { createStyles, makeStyles, Theme } from "@material-ui/core"
 import React, { useState } from "react"
 import SearchIcon from "@material-ui/icons/Search"
 
-export default function SearchInput({ onChange }) {
+type SearchInputProps = {
+    onChange: (text: string) => void
+}
+
+export default function SearchInput({ onChange }: SearchInputProps) {
     const [searchText, setSearchText] = useState("")
     const useStyles = makeStyles((theme: Theme) =>
         createStyles({

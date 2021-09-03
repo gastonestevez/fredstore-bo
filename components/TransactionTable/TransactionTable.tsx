@@ -1,12 +1,11 @@
 import * as React from "react"
-import {
-    DataGrid,
-    GridColDef,
-} from "@material-ui/data-grid"
+import { DataGrid, GridColDef } from "@material-ui/data-grid"
 import { Grid } from "@material-ui/core"
 import { H2 } from "../../common/styles/Headings.styled"
 import moment from "moment"
 import { useSelector } from "react-redux"
+import { IEarn, ITransaction } from "../../Interfaces/interfaces"
+import { RootState } from "../../redux/store"
 
 const transactionColumns: GridColDef[] = [
     {
@@ -71,11 +70,18 @@ const columns: GridColDef[] = [
     },
 ]
 
-export default function TransactionTable({ transactions, earns }) {
-    const categories = useSelector(
-        ({ categoryReducer }) => categoryReducer.categories
-    )
+type TransactionTableProps = {
+    transactions: ITransaction[] | []
+    earns: IEarn[] | []
+}
 
+export default function TransactionTable({
+    transactions,
+    earns,
+}: TransactionTableProps) {
+    const categories = useSelector(
+        ({ categoryReducer }: RootState) => categoryReducer.categories
+    )
 
     const transactionRows = transactions.map((t: any) => {
         return {
@@ -93,7 +99,7 @@ export default function TransactionTable({ transactions, earns }) {
         const category = categories.find(
             (c: any) => c._id === earn.product.category_id
         ).name
-        
+
         return {
             id: earn._id,
             product: earn.product.name,
@@ -106,13 +112,24 @@ export default function TransactionTable({ transactions, earns }) {
 
     const getTotalEarnings = () => {
         if (earns.length) {
-            return earns.reduce((ac, cv) => ac + (cv.product.sell_price-cv.product.buy_price) * cv.total_quantity, 0)
+            const earnArr = earns as Array<IEarn>
+            return earnArr.reduce(
+                (ac: number, cv: IEarn) =>
+                    ac +
+                    (cv.product.sell_price - cv.product.buy_price) *
+                        cv.total_quantity,
+                0
+            )
         }
     }
 
     const getTotalQuantity = () => {
         if (earns.length) {
-            return earns.reduce((ac, cv) => ac + cv.total_quantity, 0)
+            const earnArr = earns as Array<IEarn>
+            return earnArr.reduce(
+                (ac: number, cv: IEarn) => ac + cv.total_quantity,
+                0
+            )
         }
     }
 

@@ -20,7 +20,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { createProduct, patchProduct } from "../../redux/thunks/productThunks"
 import * as yup from "yup"
 import { AppDispatch, RootState } from "../../redux/store"
-import { IProduct } from "../../Interfaces/interfaces"
+import { IProduct, IProductCreate } from "../../Interfaces/interfaces"
 type ProductModalProps = {
     open: boolean
     handleClose: (text: boolean) => void

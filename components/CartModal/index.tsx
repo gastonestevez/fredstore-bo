@@ -84,7 +84,6 @@ export default function CartModal({
                 const stockValue =
                     operationsTypes[operationValue] || values.stock
                 await dispatch(patchProduct({ ...cartItem, stock: stockValue }))
-
                 const finalTransaction = {
                     operation_id: values.operation,
                     payment_id: values.payment,

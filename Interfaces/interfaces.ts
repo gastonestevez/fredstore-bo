@@ -21,13 +21,17 @@ export interface IProduct {
     code_bar: string
     name: string
     sell_price: number
-    category_id?: ICategory | string | undefined
+    category_id?: ICategory | undefined
     stock: number
     brand: string
     buy_price: number
     visibility: boolean
     description: string | undefined
     __v?: number
+}
+
+export interface IProductCreate extends Omit<IProduct, 'category_id'> {
+    category_id?: string | undefined
 }
 
 export interface ITransaction {
@@ -45,7 +49,7 @@ export interface IEarn {
     _id?: string,
     total_quantity: number,
     operation_id: string,
-    product: IProduct | string,
+    product: IProduct,
     total_earn: number,
 }
 

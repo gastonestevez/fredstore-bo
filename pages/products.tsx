@@ -14,11 +14,11 @@ import { AppDispatch, RootState } from "../redux/store"
 import { IProduct } from "../Interfaces/interfaces"
 
 const Products = () => {
-    const [openCartModal, setOpenCartModal] = useState(false)
+    const [openCartModal, setOpenCartModal] = useState<boolean>(false)
     const [cartItem, setCartItem] = useState<IProduct>({} as IProduct)
-    const [openProductModal, setOpenProductModal] = useState(false)
-    const [actualProduct, setActualProduct] = useState({})
-    const [isEditingProduct, setIsEditingProduct] = useState(false)
+    const [openProductModal, setOpenProductModal] = useState<boolean>(false)
+    const [actualProduct, setActualProduct] = useState<IProduct>({} as IProduct)
+    const [isEditingProduct, setIsEditingProduct] = useState<boolean>(false)
 
     const dispatch = useDispatch<AppDispatch>()
     const productsSelector = useSelector(
@@ -27,7 +27,9 @@ const Products = () => {
     const isLoading = useSelector(
         ({ loadingReducer }: RootState) => loadingReducer.loading
     )
-    const [productsList, setProductsList] = useState<IProduct[] | null>([])
+    const [productsList, setProductsList] = useState<IProduct[]>(
+        [] as Array<IProduct>
+    )
 
     useEffect(() => {
         dispatch(fetchProducts())
@@ -68,7 +70,7 @@ const Products = () => {
         if (saved) {
             dispatch(fetchProducts())
         }
-        setActualProduct({})
+        setActualProduct({} as IProduct)
         setOpenProductModal(false)
     }
 

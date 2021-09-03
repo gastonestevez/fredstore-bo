@@ -4,7 +4,6 @@ import SettingsIcon from "@material-ui/icons/FormatListBulleted"
 import EditIcon from "@material-ui/icons/Edit"
 import theme from "../../src/theme"
 import { IconButton } from "@material-ui/core"
-import { IProduct } from "../../redux/reducers/products/IProduct"
 import {
     DataGrid,
     GridApi,
@@ -12,17 +11,24 @@ import {
     GridCellValue,
     GridColDef,
 } from "@material-ui/data-grid"
+import { IProduct } from "../../Interfaces/interfaces"
+
+type ProductTableProps = {
+    handleEditProduct: (id: string) => void,
+    handleCartItemClick: (id: string) => void,
+    products: IProduct[],
+}
 
 export default function ProductTable({
     handleCartItemClick,
     handleEditProduct,
     products,
-}) {
-    const manageStock = (id: number) => {
+}: ProductTableProps) {
+    const manageStock = (id: string) => {
         handleCartItemClick(id)
     }
 
-    const editProduct = (id: number) => {
+    const editProduct = (id: string) => {
         handleEditProduct(id)
     }
 
@@ -128,7 +134,7 @@ export default function ProductTable({
                 disableSelectionOnClick
                 getRowClassName={(params) =>
                     `stock-paint--${
-                        parseInt(params.getValue(params.id, "stock")) <= 10
+                        (params.getValue(params.id, "stock") || 0)<= 10
                             ? "LOW"
                             : "NORMAL"
                     }`
